@@ -26,7 +26,7 @@ capacity_points: null
 - [x] [[RES-009-verify-current-model-capability-matrix|RES-009]] — Verify current model capability matrix (`critical`)
 - [x] [[RES-010-verify-google-flow-credits-and-quota-rules|RES-010]] — Verify Google Flow credits and quota rules (`critical`)
 - [x] [[RES-011-define-personas-and-workflow-stories|RES-011]] — Define personas and workflow stories (`medium`)
-- [ ] [[RES-012-define-non-goals-and-mvp-release-boundary|RES-012]] — Define non-goals and MVP release boundary (`medium`)
+- [x] [[RES-012-define-non-goals-and-mvp-release-boundary|RES-012]] — Define non-goals and MVP release boundary (`medium`)
 - [ ] [[RES-013-define-ux-information-architecture|RES-013]] — Define UX information architecture (`medium`)
 - [ ] [[RES-014-define-non-slop-visual-design-principles|RES-014]] — Define non-slop visual design principles (`medium`)
 - [ ] [[RES-015-draft-extension-threat-model|RES-015]] — Draft extension threat model (`critical`)
