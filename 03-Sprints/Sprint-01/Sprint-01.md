@@ -16,7 +16,7 @@ capacity_points: null
 ## Scope (20 tickets)
 
 - [x] [[CORE-001-initialize-isolated-source-repository|CORE-001]] — Initialize isolated source repository (`high`)
-- [ ] [[CORE-002-create-mv3-manifest-and-permission-baseline|CORE-002]] — Create MV3 manifest and permission baseline (`high`)
+- [x] [[CORE-002-create-mv3-manifest-and-permission-baseline|CORE-002]] — Create MV3 manifest and permission baseline (`high`)
 - [ ] [[CORE-003-build-vite-multi-entry-extension-pipeline|CORE-003]] — Build Vite multi-entry extension pipeline (`high`)
 - [ ] [[CORE-004-configure-formatting-static-analysis-and-typescript-strict|CORE-004]] — Configure formatting, static analysis and TypeScript strictness (`high`)
 - [ ] [[CORE-005-implement-github-ci-quality-gates|CORE-005]] — Implement GitHub CI quality gates (`medium`)
