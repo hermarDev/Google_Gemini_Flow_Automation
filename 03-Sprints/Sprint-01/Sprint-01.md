@@ -27,7 +27,7 @@ capacity_points: null
 - [x] [[CORE-010-create-typography-and-icon-standards|CORE-010]] — Create typography and icon standards (`medium`)
 - [x] [[CORE-011-implement-reusable-forms-and-input-controls|CORE-011]] — Implement reusable forms and input controls (`medium`)
 - [x] [[CORE-012-implement-cards-tables-and-status-components|CORE-012]] — Implement cards, tables and status components (`medium`)
-- [ ] [[CORE-013-implement-light-dark-and-system-themes|CORE-013]] — Implement light, dark and system themes (`medium`)
+- [x] [[CORE-013-implement-light-dark-and-system-themes|CORE-013]] — Implement light, dark and system themes (`medium`)
 - [ ] [[CORE-014-implement-global-navigation-and-route-state|CORE-014]] — Implement global navigation and route state (`medium`)
 - [ ] [[CORE-015-implement-app-settings-persistence|CORE-015]] — Implement app settings persistence (`medium`)
 - [ ] [[CORE-016-create-adapter-interfaces-and-mock-transport|CORE-016]] — Create adapter interfaces and mock transport (`medium`)
