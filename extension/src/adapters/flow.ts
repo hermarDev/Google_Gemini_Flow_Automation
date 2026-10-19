@@ -26,7 +26,7 @@ export class FlowSiteAdapter implements SiteAdapter {
   }
 
   async checkConnection(): Promise<ConnectionStatus> {
-    if (typeof window === 'undefined' || !window.location.hostname.includes('flow.google.com')) {
+    if (typeof window === 'undefined' || window.location.hostname !== 'flow.google.com') {
       return {
         connected: false,
         provider: 'flow',

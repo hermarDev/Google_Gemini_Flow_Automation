@@ -18,5 +18,5 @@
     "forceConsistentCasingInFileNames": true,
     "types": ["chrome", "vitest/globals"]
   },
-  "include": ["src"]
+  "include": ["src", "playwright", "playwright-extension"]
 }

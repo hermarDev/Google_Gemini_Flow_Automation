@@ -8,6 +8,9 @@ import {
   MediaExtractResult,
   PolicyRefusalError,
   AmbiguousSubmissionError,
+  SelectorNotFoundError,
+  ModelUnavailableError,
+  MissingTabError,
   SessionSignedOutError,
   CreditDepletedError,
 } from './types.ts';
@@ -18,7 +21,14 @@ export interface MockAdapterOptions {
   connected?: boolean;
   creditBalance?: number;
   simulateFailureMode?:
-    'none' | 'policy-refusal' | 'ambiguous-submission' | 'signed-out' | 'credit-depleted';
+    | 'none'
+    | 'policy-refusal'
+    | 'ambiguous-submission'
+    | 'signed-out'
+    | 'lost-tab'
+    | 'selector-not-found'
+    | 'model-unavailable'
+    | 'credit-depleted';
   pollIntervalCount?: number;
 }
 
@@ -70,6 +80,15 @@ export class MockSiteAdapter implements SiteAdapter {
   async submitJob(input: GenerationJobInput): Promise<JobSubmissionResult> {
     if (this.options.simulateFailureMode === 'signed-out') {
       throw new SessionSignedOutError(this.provider);
+    }
+    if (this.options.simulateFailureMode === 'lost-tab') {
+      throw new MissingTabError(this.provider);
+    }
+    if (this.options.simulateFailureMode === 'selector-not-found') {
+      throw new SelectorNotFoundError('[data-submit]', `${this.provider} submit control`);
+    }
+    if (this.options.simulateFailureMode === 'model-unavailable') {
+      throw new ModelUnavailableError(input.model, this.provider);
     }
     if (this.options.simulateFailureMode === 'credit-depleted') {
       throw new CreditDepletedError(0, input.estimatedCredits);

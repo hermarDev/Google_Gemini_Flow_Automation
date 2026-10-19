@@ -5,7 +5,6 @@ import {
   VideoAspect,
   VideoDuration,
   ProviderSchema,
-  JobStatusSchema,
   VideoAspectSchema,
   VideoDurationSchema,
 } from '../shared/types.ts';
@@ -18,6 +17,7 @@ export type AdapterErrorCode =
   | 'SELECTOR_NOT_FOUND'
   | 'MODEL_UNAVAILABLE'
   | 'SESSION_SIGNED_OUT'
+  | 'MISSING_TAB'
   | 'CREDIT_DEPLETED'
   | 'POLICY_REFUSAL'
   | 'RATE_LIMITED'
@@ -61,6 +61,17 @@ export class ModelUnavailableError extends AdapterError {
       `Model "${model}" is currently unavailable or not enabled on ${provider}.`,
       'MODEL_UNAVAILABLE',
       false,
+      false
+    );
+  }
+}
+
+export class MissingTabError extends AdapterError {
+  constructor(provider: Provider) {
+    super(
+      `No active tab is available for ${provider}. Submission stopped safely.`,
+      'MISSING_TAB',
+      true,
       false
     );
   }

@@ -26,7 +26,7 @@ export class GeminiSiteAdapter implements SiteAdapter {
   }
 
   async checkConnection(): Promise<ConnectionStatus> {
-    if (typeof window === 'undefined' || !window.location.hostname.includes('gemini.google.com')) {
+    if (typeof window === 'undefined' || window.location.hostname !== 'gemini.google.com') {
       return {
         connected: false,
         provider: 'gemini',

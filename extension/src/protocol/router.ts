@@ -19,7 +19,7 @@ export class MessageRouter {
   }
 
   register<T extends ExtensionMessage['type']>(type: T, handler: MessageHandler<T>): void {
-    this.handlers.set(type, handler as MessageHandler<never>);
+    this.handlers.set(type, (message, sender) => handler(message as never, sender));
   }
 
   async dispatch(

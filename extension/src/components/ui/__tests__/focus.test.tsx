@@ -1,8 +1,8 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import React, { useState } from 'react';
-import { WorkspaceApp } from '../../workspace/WorkspaceApp.tsx';
-import { SidePanel } from '../../sidepanel/SidePanel.tsx';
+import { WorkspaceApp } from '../../../workspace/WorkspaceApp.tsx';
+import { SidePanel } from '../../../sidepanel/SidePanel.tsx';
 import { ModalDialog } from '../Components.tsx';
 
 describe('Keyboard Navigation & Accessible Focus (CORE-018 / RES-017)', () => {

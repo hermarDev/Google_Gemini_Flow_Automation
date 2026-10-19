@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { act, render, screen, fireEvent } from '@testing-library/react';
 import { parseHash, formatHash } from '../router.ts';
 import { WorkspaceApp } from '../WorkspaceApp.tsx';
 
@@ -69,8 +69,10 @@ describe('Global Navigation & Route State (CORE-014)', () => {
       render(<WorkspaceApp />);
 
       // Simulate browser back/forward navigation to #/library
-      window.location.hash = '#/library';
-      window.dispatchEvent(new HashChangeEvent('hashchange'));
+      act(() => {
+        window.location.hash = '#/library';
+        window.dispatchEvent(new HashChangeEvent('hashchange'));
+      });
 
       expect(screen.getByRole('heading', { level: 2, name: /media library/i })).toBeDefined();
     });

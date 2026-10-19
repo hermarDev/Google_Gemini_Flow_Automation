@@ -13,16 +13,8 @@
     "service_worker": "src/background/index.ts",
     "type": "module"
   },
-  "permissions": [
-    "sidePanel",
-    "storage",
-    "downloads",
-    "activeTab"
-  ],
-  "host_permissions": [
-    "https://flow.google.com/*",
-    "https://gemini.google.com/*"
-  ],
+  "permissions": ["sidePanel", "storage", "downloads", "activeTab"],
+  "host_permissions": ["https://flow.google.com/*", "https://gemini.google.com/*"],
   "content_scripts": [
     {
       "matches": ["https://flow.google.com/*"],

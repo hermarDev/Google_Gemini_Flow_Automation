@@ -26,23 +26,32 @@ extension/
 ## 2. Development Setup
 
 ### Prerequisites
+
 - Node.js >= 20.0.0 (tested on Node v22.x on Fedora Linux)
 - npm >= 10.0.0
 - Google Chrome / Chromium >= 116.0 (supporting `chrome.sidePanel`)
 
 ### Installation
+
 ```bash
 cd extension
 npm install
 ```
 
 ### Build & Test
+
 ```bash
 # Typecheck
 npm run typecheck
 
 # Run automated tests
 npm run test
+
+# Preview UI smoke tests (requires a completed build)
+npm run test:smoke
+
+# Load the packaged MV3 extension in isolated Chromium (requires a completed build)
+npm run test:extension
 
 # Production build
 npm run build
