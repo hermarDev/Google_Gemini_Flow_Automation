@@ -24,7 +24,7 @@ capacity_points: null
 - [x] [[RES-007-capture-google-gemini-live-ux-baseline|RES-007]] — Capture Google Gemini live UX baseline (`medium`)
 - [x] [[RES-008-capture-google-flow-live-ux-baseline|RES-008]] — Capture Google Flow live UX baseline (`medium`)
 - [x] [[RES-009-verify-current-model-capability-matrix|RES-009]] — Verify current model capability matrix (`critical`)
-- [ ] [[RES-010-verify-google-flow-credits-and-quota-rules|RES-010]] — Verify Google Flow credits and quota rules (`critical`)
+- [x] [[RES-010-verify-google-flow-credits-and-quota-rules|RES-010]] — Verify Google Flow credits and quota rules (`critical`)
 - [ ] [[RES-011-define-personas-and-workflow-stories|RES-011]] — Define personas and workflow stories (`medium`)
 - [ ] [[RES-012-define-non-goals-and-mvp-release-boundary|RES-012]] — Define non-goals and MVP release boundary (`medium`)
 - [ ] [[RES-013-define-ux-information-architecture|RES-013]] — Define UX information architecture (`medium`)
