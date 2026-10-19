@@ -29,7 +29,7 @@ capacity_points: null
 - [x] [[RES-012-define-non-goals-and-mvp-release-boundary|RES-012]] — Define non-goals and MVP release boundary (`medium`)
 - [x] [[RES-013-define-ux-information-architecture|RES-013]] — Define UX information architecture (`medium`)
 - [x] [[RES-014-define-non-slop-visual-design-principles|RES-014]] — Define non-slop visual design principles (`medium`)
-- [ ] [[RES-015-draft-extension-threat-model|RES-015]] — Draft extension threat model (`critical`)
+- [x] [[RES-015-draft-extension-threat-model|RES-015]] — Draft extension threat model (`critical`)
 - [ ] [[RES-016-approve-architecture-decision-record|RES-016]] — Approve architecture decision record (`critical`)
 - [ ] [[RES-017-define-accessibility-and-compatibility-baseline|RES-017]] — Define accessibility and compatibility baseline (`medium`)
 - [ ] [[RES-018-approve-sprint-0-exit-gate-and-development-backlog|RES-018]] — Approve Sprint 0 exit gate and development backlog (`critical`)
