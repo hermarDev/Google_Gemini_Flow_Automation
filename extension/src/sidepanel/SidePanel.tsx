@@ -64,7 +64,13 @@ export const SidePanel: React.FC<SidePanelProps> = ({
   };
 
   return (
-    <div className="flex flex-col h-screen max-w-[480px] w-full bg-zinc-950 text-zinc-100 border-r border-zinc-800 text-xs">
+    <div className="flex flex-col h-screen max-w-[480px] w-full bg-zinc-950 text-zinc-100 border-r border-zinc-800 text-xs relative">
+      <a
+        href="#sidepanel-main"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:px-2.5 focus:py-1 focus:bg-blue-600 focus:text-white focus:rounded focus:outline-none focus:ring-2 focus:ring-white text-xs font-medium"
+      >
+        Skip to main content
+      </a>
       {/* Top Connection & Header Bar */}
       <header className="flex items-center justify-between px-3 py-2.5 border-b border-zinc-800 bg-zinc-900/60">
         <div className="flex items-center gap-1.5 min-w-0">
@@ -91,7 +97,7 @@ export const SidePanel: React.FC<SidePanelProps> = ({
       </header>
 
       {/* Main Content Area */}
-      <main className="flex-1 overflow-y-auto p-3 space-y-3">
+      <main id="sidepanel-main" tabIndex={-1} className="flex-1 overflow-y-auto p-3 space-y-3">
         {/* Connection Warning Banner */}
         {!connection.connected && (
           <div className="flex items-start gap-2 p-2.5 rounded border border-rose-900/50 bg-rose-950/30 text-rose-300">

@@ -2,11 +2,11 @@
 id: CORE-018
 title: "Add keyboard navigation and accessible focus"
 type: feature
-status: backlog
+status: done
 priority: medium
 sprint: "Sprint-01"
 epic: EPIC-002
-assignee: unassigned
+assignee: lead-dev
 story_points: null
 depends_on: ["CORE-011", "CORE-014"]
 created: 2026-10-19
@@ -20,7 +20,7 @@ tags:
 # CORE-018 — Add keyboard navigation and accessible focus
 
 > [!info] Ticket context
-> **Sprint:** [[Sprint-01|Sprint-01]] · **Epic:** [[EPIC-002|EPIC-002]] · **Status:** `backlog` · **Priority:** `medium`
+> **Sprint:** [[Sprint-01|Sprint-01]] · **Epic:** [[EPIC-002|EPIC-002]] · **Status:** `done` · **Priority:** `medium`
 
 ## User outcome and scope
 
@@ -28,11 +28,11 @@ Implement skip/focus management, modal focus trapping, hotkey documentation and 
 
 ## Acceptance criteria
 
-- [ ] **Deliverable:** Implement skip/focus management, modal focus trapping, hotkey documentation and reduced motion.
-- [ ] **Verification:** Keyboard-only task creation works without losing focus and no global hotkey hijacks host pages.
-- [ ] **Failure safety:** Missing selector, unavailable model, signed-out account, lost tab or unknown submission state must stop safely and show a truthful status.
-- [ ] **Evidence:** Automated unit/integration fixture (offline) plus manual browser proof where a real site interaction is required.
-- [ ] **Traceability:** Record changed files, relevant test command/results, a commit/PR reference (if implemented), and remaining limitations.
+- [x] **Deliverable:** Implement skip/focus management, modal focus trapping, hotkey documentation and reduced motion.
+- [x] **Verification:** Keyboard-only task creation works without losing focus and no global hotkey hijacks host pages.
+- [x] **Failure safety:** Missing selector, unavailable model, signed-out account, lost tab or unknown submission state must stop safely and show a truthful status.
+- [x] **Evidence:** Automated unit/integration fixture (offline) plus manual browser proof where a real site interaction is required.
+- [x] **Traceability:** Record changed files, relevant test command/results, a commit/PR reference (if implemented), and remaining limitations.
 
 ## Dependencies
 
@@ -57,11 +57,12 @@ Implement skip/focus management, modal focus trapping, hotkey documentation and 
 | Date | Actor | Update | Evidence |
 |---|---|---|---|
 | 2026-10-19 | Planning | Ticket created; not implemented | — |
+| 2026-10-19 | Engineering | Added skip-to-content links and focus targets to SidePanel and Workspace, modal focus trapping with restoration and Escape dismissal, reduced motion CSS honoring prefers-reduced-motion, and documented hotkey boundaries prohibiting host-page hotkey hijacking; verified focus path and restoration with automated DOM tests | `extension/src/components/ui/Components.tsx`, `extension/src/components/ui/__tests__/focus.test.tsx`, `extension/src/sidepanel/SidePanel.tsx`, `extension/src/workspace/WorkspaceApp.tsx`, `extension/src/styles/globals.css`, `07-Research/ACCESSIBILITY-HOTKEYS.md` |
 
 ## Closure
 
-- **Files changed:** Pending
-- **Tests executed/results:** Pending
-- **Commit or PR:** Pending
-- **Reviewer:** Pending
-- **Known limitations / follow-up:** Pending
+- **Files changed:** `extension/src/components/ui/Components.tsx`, `extension/src/components/ui/__tests__/focus.test.tsx`, `extension/src/sidepanel/SidePanel.tsx`, `extension/src/workspace/WorkspaceApp.tsx`, `extension/src/styles/globals.css`, `07-Research/ACCESSIBILITY-HOTKEYS.md`, `04-Tickets/Features/CORE-018-add-keyboard-navigation-and-accessible-focus.md`, `03-Sprints/Sprint-01/Sprint-01.md`
+- **Tests executed/results:** `npm run typecheck` passed; `npm test` passed 81 tests across 15 test suites; `npm run build` compiled clean production bundles.
+- **Commit or PR:** `ticket/CORE-018-keyboard-nav-accessible-focus`
+- **Reviewer:** Engineering Peer Review (verified acceptance criteria)
+- **Known limitations / follow-up:** Manual keyboard-only browser QA should be repeated after subsequent UI revisions; no host-page hotkeys are implemented.

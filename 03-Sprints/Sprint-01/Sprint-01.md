@@ -32,7 +32,7 @@ capacity_points: null
 - [x] [[CORE-015-implement-app-settings-persistence|CORE-015]] — Implement app settings persistence (`medium`)
 - [x] [[CORE-016-create-adapter-interfaces-and-mock-transport|CORE-016]] — Create adapter interfaces and mock transport (`medium`)
 - [x] [[CORE-017-create-extension-message-protocol|CORE-017]] — Create extension message protocol (`medium`)
-- [ ] [[CORE-018-add-keyboard-navigation-and-accessible-focus|CORE-018]] — Add keyboard navigation and accessible focus (`medium`)
+- [x] [[CORE-018-add-keyboard-navigation-and-accessible-focus|CORE-018]] — Add keyboard navigation and accessible focus (`medium`)
 - [ ] [[CORE-019-establish-component-extension-and-smoke-test-harness|CORE-019]] — Establish component, extension and smoke test harness (`medium`)
 - [ ] [[CORE-020-deliver-sprint-1-vertical-slice|CORE-020]] — Deliver Sprint 1 vertical slice (`medium`)
 

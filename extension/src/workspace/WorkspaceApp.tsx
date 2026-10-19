@@ -240,7 +240,13 @@ export const WorkspaceApp: React.FC<WorkspaceAppProps> = ({
   };
 
   return (
-    <div className="flex min-h-screen w-full bg-zinc-950 text-zinc-100 font-sans">
+    <div className="flex min-h-screen w-full bg-zinc-950 text-zinc-100 font-sans relative">
+      <a
+        href="#workspace-main"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:px-3 focus:py-1.5 focus:bg-blue-600 focus:text-white focus:rounded focus:outline-none focus:ring-2 focus:ring-white text-xs font-medium"
+      >
+        Skip to main content
+      </a>
       <aside
         className="w-56 shrink-0 border-r border-zinc-800 bg-zinc-950 flex flex-col"
         aria-label="Workspace navigation"
