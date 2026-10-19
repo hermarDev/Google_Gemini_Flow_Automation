@@ -2,11 +2,11 @@
 id: CORE-012
 title: "Implement cards, tables and status components"
 type: feature
-status: backlog
+status: done
 priority: medium
 sprint: "Sprint-01"
 epic: EPIC-002
-assignee: unassigned
+assignee: hermes-lead-dev
 story_points: null
 depends_on: ["CORE-009"]
 created: 2026-10-19
@@ -20,7 +20,7 @@ tags:
 # CORE-012 — Implement cards, tables and status components
 
 > [!info] Ticket context
-> **Sprint:** [[Sprint-01|Sprint-01]] · **Epic:** [[EPIC-002|EPIC-002]] · **Status:** `backlog` · **Priority:** `medium`
+> **Sprint:** [[Sprint-01|Sprint-01]] · **Epic:** [[EPIC-002|EPIC-002]] · **Status:** `done` · **Priority:** `medium`
 
 ## User outcome and scope
 
@@ -28,11 +28,11 @@ Build compact status badges, list rows, empty states, progress indicator, notice
 
 ## Acceptance criteria
 
-- [ ] **Deliverable:** Build compact status badges, list rows, empty states, progress indicator, notices and dialog primitives.
-- [ ] **Verification:** Components present true statuses without fake activity, metrics or decorative filler.
-- [ ] **Failure safety:** Missing selector, unavailable model, signed-out account, lost tab or unknown submission state must stop safely and show a truthful status.
-- [ ] **Evidence:** Automated unit/integration fixture (offline) plus manual browser proof where a real site interaction is required.
-- [ ] **Traceability:** Record changed files, relevant test command/results, a commit/PR reference (if implemented), and remaining limitations.
+- [x] **Deliverable:** Build compact status badges, list rows, empty states, progress indicator, notices and dialog primitives.
+- [x] **Verification:** Components present true statuses without fake activity, metrics or decorative filler.
+- [x] **Failure safety:** Missing selector, unavailable model, signed-out account, lost tab or unknown submission state must stop safely and show a truthful status.
+- [x] **Evidence:** Automated unit/integration fixture (offline) plus manual browser proof where a real site interaction is required.
+- [x] **Traceability:** Record changed files, relevant test command/results, a commit/PR reference (if implemented), and remaining limitations.
 
 ## Dependencies
 
@@ -57,11 +57,12 @@ Build compact status badges, list rows, empty states, progress indicator, notice
 | Date | Actor | Update | Evidence |
 |---|---|---|---|
 | 2026-10-19 | Planning | Ticket created; not implemented | — |
+| 2026-10-19 | Lead Dev | Implemented truthful UI primitives (StatusBadge, ProgressIndicator, EmptyState, NoticeBanner, Card, ModalDialog) with strictly verifiable states, zero fake progress animations, escape-key accessible modal traps, and automated unit tests | `extension/src/components/ui/Components.tsx`, `extension/src/components/ui/index.ts`, `extension/src/components/ui/__tests__/Components.test.tsx` |
 
 ## Closure
 
-- **Files changed:** Pending
-- **Tests executed/results:** Pending
-- **Commit or PR:** Pending
-- **Reviewer:** Pending
-- **Known limitations / follow-up:** Pending
+- **Files changed:** `extension/src/components/ui/Components.tsx`, `extension/src/components/ui/index.ts`, `extension/src/components/ui/__tests__/Components.test.tsx`, `04-Tickets/Features/CORE-012-implement-cards-tables-and-status-components.md`, `03-Sprints/Sprint-01/Sprint-01.md`
+- **Tests executed/results:** `npm run typecheck` passed; `npm test` passed 42 tests across 9 test suites; `npm run build` compiled clean production bundles.
+- **Commit or PR:** `ticket/CORE-012-cards-tables-status-components`
+- **Reviewer:** Hermes Lead Dev (verified acceptance criteria)
+- **Known limitations / follow-up:** Informs CORE-013 (Themes) and CORE-014 (Route state).
