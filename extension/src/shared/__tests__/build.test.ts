@@ -1,9 +1,17 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeAll } from 'vitest';
+import { execSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
 
 describe('Vite Multi-Entry Build Output Verification', () => {
-  const distDir = path.resolve(__dirname, '../../../dist');
+  const extensionDir = path.resolve(__dirname, '../../..');
+  const distDir = path.resolve(extensionDir, 'dist');
+
+  beforeAll(() => {
+    if (!fs.existsSync(path.join(distDir, 'manifest.json'))) {
+      execSync('npm run build', { cwd: extensionDir, stdio: 'pipe' });
+    }
+  });
 
   it('generates dist directory with required entry artifacts', () => {
     expect(fs.existsSync(distDir)).toBe(true);
