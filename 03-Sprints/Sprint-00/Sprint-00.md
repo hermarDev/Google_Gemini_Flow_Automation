@@ -1,10 +1,10 @@
 ---
 type: sprint
 sprint: "Sprint-00"
-status: in-progress
+status: done
 created: 2026-10-19
 planned_start: 2026-10-19
-planned_end: null
+planned_end: 2026-10-19
 capacity_points: null
 ---
 # Sprint 0: Research and product definition
@@ -32,7 +32,7 @@ capacity_points: null
 - [x] [[RES-015-draft-extension-threat-model|RES-015]] — Draft extension threat model (`critical`)
 - [x] [[RES-016-approve-architecture-decision-record|RES-016]] — Approve architecture decision record (`critical`)
 - [x] [[RES-017-define-accessibility-and-compatibility-baseline|RES-017]] — Define accessibility and compatibility baseline (`medium`)
-- [ ] [[RES-018-approve-sprint-0-exit-gate-and-development-backlog|RES-018]] — Approve Sprint 0 exit gate and development backlog (`critical`)
+- [x] [[RES-018-approve-sprint-0-exit-gate-and-development-backlog|RES-018]] — Approve Sprint 0 exit gate and development backlog (`critical`)
 
 ## Execution policy
 
@@ -43,9 +43,9 @@ capacity_points: null
 
 ## Sprint review and retrospective
 
-- **Demo evidence:** Pending
-- **Completed / carried forward:** Pending
-- **Bugs and regressions:** Pending
-- **Security/licensing/budget notes:** Pending
+- **Demo evidence:** 18 documented research artifacts in `07-Research/` covering upstream audits, clean-room licensing, Google terms/CWS policies, Gemini/Flow DOM baselines, model matrices, credit schedules, personas, non-goals, UX information architecture, design tokens, STRIDE threat model, ADR-001, WCAG baselines, and exit gate review.
+- **Completed / carried forward:** All 18 tickets completed and verified. 0 tickets carried forward.
+- **Bugs and regressions:** None. 176 backlog tickets validated with 0 errors via `tools/validate_backlog.py`.
+- **Security/licensing/budget notes:** Upstream code copying strictly banned due to missing licenses and prohibited methods; 100% clean-room TypeScript code approved under MIT license. Zero credits spent during Sprint 0 research. Sprint 1 unblocked.
 - **Retro: Keep / Improve / Try:** Pending
 - **Go / no-go and approver:** Pending
