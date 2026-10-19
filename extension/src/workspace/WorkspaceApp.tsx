@@ -11,8 +11,9 @@ import {
   Download,
   Play,
 } from 'lucide-react';
+import { useWorkspaceRouter, RouteView } from './router.ts';
 
-export type WorkspaceRoute = 'create' | 'queue' | 'library' | 'history' | 'settings';
+export type WorkspaceRoute = RouteView;
 
 export interface WorkspaceTab {
   id: string;
@@ -42,7 +43,7 @@ export const WorkspaceApp: React.FC<WorkspaceAppProps> = ({
   initialTab = 'create',
   initialConnectedTab = null,
 }) => {
-  const [activeTab, setActiveTab] = useState<WorkspaceRoute>(initialTab);
+  const { route: activeTab, navigate } = useWorkspaceRouter(initialTab);
   const [connectedTab] = useState<WorkspaceTab | null>(initialConnectedTab);
 
   const openSidePanel = () => {
@@ -255,7 +256,7 @@ export const WorkspaceApp: React.FC<WorkspaceAppProps> = ({
             <button
               key={id}
               type="button"
-              onClick={() => setActiveTab(id)}
+              onClick={() => navigate(id)}
               aria-current={activeTab === id ? 'page' : undefined}
               className={`w-full flex items-center gap-3 px-3 py-2 rounded text-sm transition-colors ${
                 activeTab === id
