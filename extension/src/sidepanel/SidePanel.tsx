@@ -215,25 +215,25 @@ export const SidePanel: React.FC<SidePanelProps> = ({
             </span>
           </div>
 
+          <select
+            id="profile-select"
+            data-testid="profile-select"
+            aria-label="Select generation profile"
+            value={preset.id}
+            onChange={(e) => handleProfileChange(e.target.value)}
+            disabled={isQueueActive}
+            className="w-full bg-zinc-950 border border-zinc-800 rounded px-2.5 py-1.5 text-xs text-zinc-300 focus:outline-none focus:border-blue-500 cursor-pointer"
+          >
+            {AVAILABLE_PROFILES.map((p) => (
+              <option key={p.id} value={p.id} className="bg-zinc-950 text-zinc-200">
+                {p.model} · {p.resolution} ({p.creditsPerOutput} cr)
+              </option>
+            ))}
+          </select>
+
           <div className="bg-zinc-950 border border-zinc-800 rounded px-2.5 py-1.5 flex items-center justify-between">
-            <select
-              id="profile-select"
-              data-testid="profile-select"
-              aria-label="Select generation profile"
-              value={preset.id}
-              onChange={(e) => handleProfileChange(e.target.value)}
-              disabled={isQueueActive}
-              className="w-full bg-transparent font-medium text-zinc-200 focus:outline-none text-xs cursor-pointer"
-            >
-              {AVAILABLE_PROFILES.map((p) => (
-                <option key={p.id} value={p.id} className="bg-zinc-950 text-zinc-200">
-                  {p.name}
-                </option>
-              ))}
-            </select>
-            <span className="text-zinc-400 font-mono text-[11px] shrink-0 ml-2">
-              {preset.duration}
-            </span>
+            <span className="font-medium text-zinc-200">{preset.name}</span>
+            <span className="text-zinc-400 font-mono text-[11px]">{preset.duration}</span>
           </div>
         </section>
 
