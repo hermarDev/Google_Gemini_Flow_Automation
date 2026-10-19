@@ -24,7 +24,7 @@ capacity_points: null
 - [x] [[CORE-007-implement-extension-side-panel-shell|CORE-007]] — Implement extension side panel shell (`medium`)
 - [x] [[CORE-008-implement-full-page-workspace-shell|CORE-008]] — Implement full-page workspace shell (`medium`)
 - [x] [[CORE-009-define-design-tokens-and-spacing-system|CORE-009]] — Define design tokens and spacing system (`medium`)
-- [ ] [[CORE-010-create-typography-and-icon-standards|CORE-010]] — Create typography and icon standards (`medium`)
+- [x] [[CORE-010-create-typography-and-icon-standards|CORE-010]] — Create typography and icon standards (`medium`)
 - [ ] [[CORE-011-implement-reusable-forms-and-input-controls|CORE-011]] — Implement reusable forms and input controls (`medium`)
 - [ ] [[CORE-012-implement-cards-tables-and-status-components|CORE-012]] — Implement cards, tables and status components (`medium`)
 - [ ] [[CORE-013-implement-light-dark-and-system-themes|CORE-013]] — Implement light, dark and system themes (`medium`)
