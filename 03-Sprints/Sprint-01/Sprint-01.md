@@ -19,7 +19,7 @@ capacity_points: null
 - [x] [[CORE-002-create-mv3-manifest-and-permission-baseline|CORE-002]] — Create MV3 manifest and permission baseline (`high`)
 - [x] [[CORE-003-build-vite-multi-entry-extension-pipeline|CORE-003]] — Build Vite multi-entry extension pipeline (`high`)
 - [x] [[CORE-004-configure-formatting-static-analysis-and-typescript-strict|CORE-004]] — Configure formatting, static analysis and TypeScript strictness (`high`)
-- [ ] [[CORE-005-implement-github-ci-quality-gates|CORE-005]] — Implement GitHub CI quality gates (`medium`)
+- [x] [[CORE-005-implement-github-ci-quality-gates|CORE-005]] — Implement GitHub CI quality gates (`medium`)
 - [ ] [[CORE-006-create-obsidian-ticket-to-code-traceability-convention|CORE-006]] — Create Obsidian ticket-to-code traceability convention (`medium`)
 - [ ] [[CORE-007-implement-extension-side-panel-shell|CORE-007]] — Implement extension side panel shell (`medium`)
 - [ ] [[CORE-008-implement-full-page-workspace-shell|CORE-008]] — Implement full-page workspace shell (`medium`)
