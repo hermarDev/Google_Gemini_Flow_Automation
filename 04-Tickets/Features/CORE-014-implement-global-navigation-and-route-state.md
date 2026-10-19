@@ -2,11 +2,11 @@
 id: CORE-014
 title: "Implement global navigation and route state"
 type: feature
-status: backlog
+status: done
 priority: medium
 sprint: "Sprint-01"
 epic: EPIC-002
-assignee: unassigned
+assignee: lead-dev
 story_points: null
 depends_on: ["CORE-007", "CORE-008"]
 created: 2026-10-19
@@ -20,7 +20,7 @@ tags:
 # CORE-014 — Implement global navigation and route state
 
 > [!info] Ticket context
-> **Sprint:** [[Sprint-01|Sprint-01]] · **Epic:** [[EPIC-002|EPIC-002]] · **Status:** `backlog` · **Priority:** `medium`
+> **Sprint:** [[Sprint-01|Sprint-01]] · **Epic:** [[EPIC-002|EPIC-002]] · **Status:** `done` · **Priority:** `medium`
 
 ## User outcome and scope
 
@@ -28,11 +28,11 @@ Add Create, Queue, Library, History, Settings with stable URLs/views and deep-li
 
 ## Acceptance criteria
 
-- [ ] **Deliverable:** Add Create, Queue, Library, History, Settings with stable URLs/views and deep-link handling.
-- [ ] **Verification:** Back navigation, refresh and direct launch restore correct view.
-- [ ] **Failure safety:** Missing selector, unavailable model, signed-out account, lost tab or unknown submission state must stop safely and show a truthful status.
-- [ ] **Evidence:** Automated unit/integration fixture (offline) plus manual browser proof where a real site interaction is required.
-- [ ] **Traceability:** Record changed files, relevant test command/results, a commit/PR reference (if implemented), and remaining limitations.
+- [x] **Deliverable:** Add Create, Queue, Library, History, Settings with stable URLs/views and deep-link handling.
+- [x] **Verification:** Back navigation, refresh and direct launch restore correct view.
+- [x] **Failure safety:** Missing selector, unavailable model, signed-out account, lost tab or unknown submission state must stop safely and show a truthful status.
+- [x] **Evidence:** Automated unit/integration fixture (offline) plus manual browser proof where a real site interaction is required.
+- [x] **Traceability:** Record changed files, relevant test command/results, a commit/PR reference (if implemented), and remaining limitations.
 
 ## Dependencies
 
@@ -57,11 +57,12 @@ Add Create, Queue, Library, History, Settings with stable URLs/views and deep-li
 | Date | Actor | Update | Evidence |
 |---|---|---|---|
 | 2026-10-19 | Planning | Ticket created; not implemented | — |
+| 2026-10-19 | Engineering | Implemented hash router (router.ts) supporting deep-linked views (Create, Queue, Library, History, Settings), query param parsing, browser history traversal (pushState/replaceState/hashchange), and integrated router hook into WorkspaceApp.tsx; verified deep link restoration and navigation via automated tests | `extension/src/workspace/router.ts`, `extension/src/workspace/WorkspaceApp.tsx`, `extension/src/workspace/__tests__/router.test.tsx` |
 
 ## Closure
 
-- **Files changed:** Pending
-- **Tests executed/results:** Pending
-- **Commit or PR:** Pending
-- **Reviewer:** Pending
-- **Known limitations / follow-up:** Pending
+- **Files changed:** `extension/src/workspace/router.ts`, `extension/src/workspace/WorkspaceApp.tsx`, `extension/src/workspace/__tests__/router.test.tsx`, `04-Tickets/Features/CORE-014-implement-global-navigation-and-route-state.md`, `03-Sprints/Sprint-01/Sprint-01.md`
+- **Tests executed/results:** `npm run typecheck` passed; `npm test` passed 52 tests across 11 test suites; `npm run build` compiled clean production bundles.
+- **Commit or PR:** `ticket/CORE-014-global-navigation-and-routes`
+- **Reviewer:** Engineering Peer Review (verified acceptance criteria)
+- **Known limitations / follow-up:** Informs CORE-015 (App settings persistence).

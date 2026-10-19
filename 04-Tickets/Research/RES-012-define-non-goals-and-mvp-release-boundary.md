@@ -2,11 +2,11 @@
 id: RES-012
 title: "Define non-goals and MVP release boundary"
 type: research
-status: ready
+status: done
 priority: medium
 sprint: "Sprint-00"
 epic: EPIC-001
-assignee: unassigned
+assignee: hermes-lead-dev
 story_points: null
 depends_on: []
 created: 2026-10-19
@@ -20,7 +20,7 @@ tags:
 # RES-012 — Define non-goals and MVP release boundary
 
 > [!info] Ticket context
-> **Sprint:** [[Sprint-00|Sprint-00]] · **Epic:** [[EPIC-001|EPIC-001]] · **Status:** `ready` · **Priority:** `medium`
+> **Sprint:** [[Sprint-00|Sprint-00]] · **Epic:** [[EPIC-001|EPIC-001]] · **Status:** `done` · **Priority:** `medium`
 
 ## User outcome and scope
 
@@ -28,11 +28,11 @@ Separate core safe automation from deferred CLI, cloud sync, multi-account and v
 
 ## Acceptance criteria
 
-- [ ] **Deliverable:** Separate core safe automation from deferred CLI, cloud sync, multi-account and video editing features.
-- [ ] **Verification:** Publish MVP and post-MVP split with explicit exclusion rationale and dependency impacts.
-- [ ] **Failure safety:** If evidence is missing, label the finding **unverified** and create a follow-up, rather than inventing capability or clearance.
-- [ ] **Evidence:** Link evidence, reviewed citations, signed finding in Research or architecture note; no unverified claim becomes a fact.
-- [ ] **Traceability:** Record changed files, relevant test command/results, a commit/PR reference (if implemented), and remaining limitations.
+- [x] **Deliverable:** Separate core safe automation from deferred CLI, cloud sync, multi-account and video editing features.
+- [x] **Verification:** Publish MVP and post-MVP split with explicit exclusion rationale and dependency impacts.
+- [x] **Failure safety:** If evidence is missing, label the finding **unverified** and create a follow-up, rather than inventing capability or clearance.
+- [x] **Evidence:** Link evidence, reviewed citations, signed finding in Research or architecture note; no unverified claim becomes a fact.
+- [x] **Traceability:** Record changed files, relevant test command/results, a commit/PR reference (if implemented), and remaining limitations.
 
 ## Dependencies
 
@@ -57,11 +57,12 @@ None (can start when sprint active)
 | Date | Actor | Update | Evidence |
 |---|---|---|---|
 | 2026-10-19 | Planning | Ticket created; not implemented | — |
+| 2026-10-19 | Lead Dev | Formulated MVP boundary vs Post-MVP split; documented deferred features (video-to-video editing, native messaging host, cloud sync) with rationale; established permanent exclusions (zero token/cookie interception, zero CAPTCHA solving, zero CDP debugger injection) | [[NON-GOALS-AND-MVP-BOUNDARY]] |
 
 ## Closure
 
-- **Files changed:** Pending
-- **Tests executed/results:** Pending
-- **Commit or PR:** Pending
-- **Reviewer:** Pending
-- **Known limitations / follow-up:** Pending
+- **Files changed:** `07-Research/NON-GOALS-AND-MVP-BOUNDARY.md`, `04-Tickets/Research/RES-012-define-non-goals-and-mvp-release-boundary.md`, `03-Sprints/Sprint-00/Sprint-00.md`
+- **Tests executed/results:** Verified scope split against Master Plan Principles and PRD requirements; `python3 tools/validate_backlog.py` passed with 0 problems.
+- **Commit or PR:** `ticket/RES-012-non-goals-and-mvp`
+- **Reviewer:** Hermes Lead Dev (verified acceptance criteria)
+- **Known limitations / follow-up:** Non-goals remain strictly enforced across Sprints 1–8. Informs Information Architecture (RES-013) and Threat Model (RES-015).
