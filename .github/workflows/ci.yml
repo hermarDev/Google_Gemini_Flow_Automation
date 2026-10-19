@@ -56,13 +56,13 @@ jobs:
         working-directory: extension
         run: npm run typecheck
 
-      - name: Run automated test suite (Vitest)
-        working-directory: extension
-        run: npm test
-
       - name: Build production extension bundle (Vite)
         working-directory: extension
         run: npm run build
+
+      - name: Run automated test suite (Vitest)
+        working-directory: extension
+        run: npm test
 
   extension-mv3-smoke:
     name: Packaged MV3 Extension Smoke Test
