@@ -1,0 +1,39 @@
+# Dependency directories
+node_modules/
+**/node_modules/
+
+# Build artifacts
+dist/
+**/dist/
+build/
+**/build/
+.crx/
+*.crx
+*.zip
+
+# Environment & credentials (strictly prohibited from git)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Logs & caches
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.eslintcache
+.turbo
+.parcel-cache
+.vite/
+**/.vite/
+coverage/
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# Scratch and test output
+scratch/
+test-results/
+playwright-report/
