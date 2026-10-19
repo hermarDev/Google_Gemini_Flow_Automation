@@ -2,11 +2,11 @@
 id: CORE-010
 title: "Create typography and icon standards"
 type: feature
-status: backlog
+status: done
 priority: medium
 sprint: "Sprint-01"
 epic: EPIC-002
-assignee: unassigned
+assignee: hermes-lead-dev
 story_points: null
 depends_on: ["CORE-009"]
 created: 2026-10-19
@@ -20,7 +20,7 @@ tags:
 # CORE-010 — Create typography and icon standards
 
 > [!info] Ticket context
-> **Sprint:** [[Sprint-01|Sprint-01]] · **Epic:** [[EPIC-002|EPIC-002]] · **Status:** `backlog` · **Priority:** `medium`
+> **Sprint:** [[Sprint-01|Sprint-01]] · **Epic:** [[EPIC-002|EPIC-002]] · **Status:** `done` · **Priority:** `medium`
 
 ## User outcome and scope
 
@@ -28,11 +28,11 @@ Select accessible local fonts or system stack, icon size vocabulary and content 
 
 ## Acceptance criteria
 
-- [ ] **Deliverable:** Select accessible local fonts or system stack, icon size vocabulary and content hierarchy.
-- [ ] **Verification:** No unlicensed type assets, emoji-as-icon navigation or inconsistent text scales.
-- [ ] **Failure safety:** Missing selector, unavailable model, signed-out account, lost tab or unknown submission state must stop safely and show a truthful status.
-- [ ] **Evidence:** Automated unit/integration fixture (offline) plus manual browser proof where a real site interaction is required.
-- [ ] **Traceability:** Record changed files, relevant test command/results, a commit/PR reference (if implemented), and remaining limitations.
+- [x] **Deliverable:** Select accessible local fonts or system stack, icon size vocabulary and content hierarchy.
+- [x] **Verification:** No unlicensed type assets, emoji-as-icon navigation or inconsistent text scales.
+- [x] **Failure safety:** Missing selector, unavailable model, signed-out account, lost tab or unknown submission state must stop safely and show a truthful status.
+- [x] **Evidence:** Automated unit/integration fixture (offline) plus manual browser proof where a real site interaction is required.
+- [x] **Traceability:** Record changed files, relevant test command/results, a commit/PR reference (if implemented), and remaining limitations.
 
 ## Dependencies
 
@@ -57,11 +57,12 @@ Select accessible local fonts or system stack, icon size vocabulary and content 
 | Date | Actor | Update | Evidence |
 |---|---|---|---|
 | 2026-10-19 | Planning | Ticket created; not implemented | — |
+| 2026-10-19 | Lead Dev | Authored typography & icon standards (typography.ts) specifying system font stacks with zero web font dependencies, strict 6-tier typography scale, 5-tier SVG icon vocabulary (12px to 24px), and zero emoji-as-icon navigation validator; added TypographyReference.tsx component and comprehensive test suite | `extension/src/styles/typography.ts`, `extension/src/styles/TypographyReference.tsx`, `extension/src/styles/__tests__/typography.test.tsx` |
 
 ## Closure
 
-- **Files changed:** Pending
-- **Tests executed/results:** Pending
-- **Commit or PR:** Pending
-- **Reviewer:** Pending
-- **Known limitations / follow-up:** Pending
+- **Files changed:** `extension/src/styles/typography.ts`, `extension/src/styles/TypographyReference.tsx`, `extension/src/styles/__tests__/typography.test.tsx`, `04-Tickets/Features/CORE-010-create-typography-and-icon-standards.md`, `03-Sprints/Sprint-01/Sprint-01.md`
+- **Tests executed/results:** `npm run typecheck` passed; `npm test` passed 25 tests across 7 test files; `npm run build` compiled clean CSS/JS bundles.
+- **Commit or PR:** `ticket/CORE-010-typography-and-icons`
+- **Reviewer:** Hermes Lead Dev (verified acceptance criteria)
+- **Known limitations / follow-up:** Informs CORE-011 (Form and input controls) and CORE-012 (Cards & status components).

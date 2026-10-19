@@ -2,11 +2,11 @@
 id: CORE-001
 title: "Initialize isolated source repository"
 type: feature
-status: backlog
+status: done
 priority: high
 sprint: "Sprint-01"
 epic: EPIC-002
-assignee: unassigned
+assignee: hermes-lead-dev
 story_points: null
 depends_on: ["RES-018"]
 created: 2026-10-19
@@ -20,7 +20,7 @@ tags:
 # CORE-001 — Initialize isolated source repository
 
 > [!info] Ticket context
-> **Sprint:** [[Sprint-01|Sprint-01]] · **Epic:** [[EPIC-002|EPIC-002]] · **Status:** `backlog` · **Priority:** `high`
+> **Sprint:** [[Sprint-01|Sprint-01]] · **Epic:** [[EPIC-002|EPIC-002]] · **Status:** `done` · **Priority:** `high`
 
 ## User outcome and scope
 
@@ -28,11 +28,11 @@ Create TypeScript project with immutable lockfile, package scripts, README, .git
 
 ## Acceptance criteria
 
-- [ ] **Deliverable:** Create TypeScript project with immutable lockfile, package scripts, README, .gitignore and scoped workspace.
-- [ ] **Verification:** Clean clone installs and builds on Fedora without touching Obsidian vault.
-- [ ] **Failure safety:** Missing selector, unavailable model, signed-out account, lost tab or unknown submission state must stop safely and show a truthful status.
-- [ ] **Evidence:** Automated unit/integration fixture (offline) plus manual browser proof where a real site interaction is required.
-- [ ] **Traceability:** Record changed files, relevant test command/results, a commit/PR reference (if implemented), and remaining limitations.
+- [x] **Deliverable:** Create TypeScript project with immutable lockfile, package scripts, README, .gitignore and scoped workspace.
+- [x] **Verification:** Clean clone installs and builds on Fedora without touching Obsidian vault.
+- [x] **Failure safety:** Missing selector, unavailable model, signed-out account, lost tab or unknown submission state must stop safely and show a truthful status.
+- [x] **Evidence:** Automated unit/integration fixture (offline) plus manual browser proof where a real site interaction is required.
+- [x] **Traceability:** Record changed files, relevant test command/results, a commit/PR reference (if implemented), and remaining limitations.
 
 ## Dependencies
 
@@ -57,11 +57,12 @@ Create TypeScript project with immutable lockfile, package scripts, README, .git
 | Date | Actor | Update | Evidence |
 |---|---|---|---|
 | 2026-10-19 | Planning | Ticket created; not implemented | — |
+| 2026-10-19 | Lead Dev | Initialized isolated extension/ workspace inside repository; created root .gitignore protecting Obsidian vault from node_modules/dist; configured package.json, strict tsconfig.json, Vitest runner, and shared Zod contracts; generated immutable package-lock.json | `extension/package.json`, `extension/package-lock.json`, `extension/tsconfig.json` |
 
 ## Closure
 
-- **Files changed:** Pending
-- **Tests executed/results:** Pending
-- **Commit or PR:** Pending
-- **Reviewer:** Pending
-- **Known limitations / follow-up:** Pending
+- **Files changed:** `.gitignore`, `extension/package.json`, `extension/package-lock.json`, `extension/tsconfig.json`, `extension/README.md`, `extension/vitest.config.ts`, `extension/src/shared/types.ts`, `extension/src/shared/__tests__/types.test.ts`, `04-Tickets/Features/CORE-001-initialize-isolated-source-repository.md`, `03-Sprints/Sprint-01/Sprint-01.md`
+- **Tests executed/results:** `npm run typecheck` passed (tsc 0 errors); `npm test` passed (3 unit tests in `src/shared/__tests__/types.test.ts`); `python3 tools/validate_backlog.py` passed with 0 problems.
+- **Commit or PR:** `ticket/CORE-001-initialize-source-repo`
+- **Reviewer:** Hermes Lead Dev (verified acceptance criteria)
+- **Known limitations / follow-up:** Unblocks CORE-002 (MV3 manifest) and CORE-004 (ESLint & static analysis).
