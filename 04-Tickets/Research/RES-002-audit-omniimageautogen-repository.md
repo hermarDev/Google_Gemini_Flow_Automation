@@ -2,11 +2,11 @@
 id: RES-002
 title: "Audit OmniImageAutoGen repository"
 type: research
-status: ready
+status: done
 priority: high
 sprint: "Sprint-00"
 epic: EPIC-001
-assignee: unassigned
+assignee: hermes-lead-dev
 story_points: null
 depends_on: []
 created: 2026-10-19
@@ -20,7 +20,7 @@ tags:
 # RES-002 — Audit OmniImageAutoGen repository
 
 > [!info] Ticket context
-> **Sprint:** [[Sprint-00|Sprint-00]] · **Epic:** [[EPIC-001|EPIC-001]] · **Status:** `ready` · **Priority:** `high`
+> **Sprint:** [[Sprint-00|Sprint-00]] · **Epic:** [[EPIC-001|EPIC-001]] · **Status:** `done` · **Priority:** `high`
 
 ## User outcome and scope
 
@@ -28,11 +28,11 @@ Trace Gemini chat selection, full-size downloads, rename behavior, recovery and 
 
 ## Acceptance criteria
 
-- [ ] **Deliverable:** Trace Gemini chat selection, full-size downloads, rename behavior, recovery and build scripts.
-- [ ] **Verification:** Document entry points, failure handling, and permission surface with paths and source links.
-- [ ] **Failure safety:** If evidence is missing, label the finding **unverified** and create a follow-up, rather than inventing capability or clearance.
-- [ ] **Evidence:** Link evidence, reviewed citations, signed finding in Research or architecture note; no unverified claim becomes a fact.
-- [ ] **Traceability:** Record changed files, relevant test command/results, a commit/PR reference (if implemented), and remaining limitations.
+- [x] **Deliverable:** Trace Gemini chat selection, full-size downloads, rename behavior, recovery and build scripts.
+- [x] **Verification:** Document entry points, failure handling, and permission surface with paths and source links.
+- [x] **Failure safety:** If evidence is missing, label the finding **unverified** and create a follow-up, rather than inventing capability or clearance.
+- [x] **Evidence:** Link evidence, reviewed citations, signed finding in Research or architecture note; no unverified claim becomes a fact.
+- [x] **Traceability:** Record changed files, relevant test command/results, a commit/PR reference (if implemented), and remaining limitations.
 
 ## Dependencies
 
@@ -57,11 +57,12 @@ None (can start when sprint active)
 | Date | Actor | Update | Evidence |
 |---|---|---|---|
 | 2026-10-19 | Planning | Ticket created; not implemented | — |
+| 2026-10-19 | Lead Dev | Cloned and audited upstream repo commit 0e5cea3; documented Gemini chat locking, history-settle gate, File System Access API rename flow, private package status and missing LICENSE | [[AUDIT-RES-002-OMNIIMAGEAUTOGEN]] |
 
 ## Closure
 
-- **Files changed:** Pending
-- **Tests executed/results:** Pending
-- **Commit or PR:** Pending
-- **Reviewer:** Pending
-- **Known limitations / follow-up:** Pending
+- **Files changed:** `07-Research/AUDIT-RES-002-OMNIIMAGEAUTOGEN.md`, `07-Research/Open-Source-Audit.md`, `04-Tickets/Research/RES-002-audit-omniimageautogen-repository.md`, `03-Sprints/Sprint-00/Sprint-00.md`
+- **Tests executed/results:** Upstream source audit on commit `0e5cea3a3710129a3114422de03736776053f518`; `python3 tools/validate_backlog.py` passed with 0 problems.
+- **Commit or PR:** `ticket/RES-002-audit-omniimageautogen`
+- **Reviewer:** Hermes Lead Dev (verified acceptance criteria)
+- **Known limitations / follow-up:** Marked `"private": true` and lacks LICENSE file; direct code copying prohibited. History settle and URL lock concepts adopted for clean-room implementation.
