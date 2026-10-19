@@ -31,7 +31,7 @@ capacity_points: null
 - [x] [[RES-014-define-non-slop-visual-design-principles|RES-014]] — Define non-slop visual design principles (`medium`)
 - [x] [[RES-015-draft-extension-threat-model|RES-015]] — Draft extension threat model (`critical`)
 - [x] [[RES-016-approve-architecture-decision-record|RES-016]] — Approve architecture decision record (`critical`)
-- [ ] [[RES-017-define-accessibility-and-compatibility-baseline|RES-017]] — Define accessibility and compatibility baseline (`medium`)
+- [x] [[RES-017-define-accessibility-and-compatibility-baseline|RES-017]] — Define accessibility and compatibility baseline (`medium`)
 - [ ] [[RES-018-approve-sprint-0-exit-gate-and-development-backlog|RES-018]] — Approve Sprint 0 exit gate and development backlog (`critical`)
 
 ## Execution policy
