@@ -19,7 +19,7 @@ capacity_points: null
 - [x] [[RES-002-audit-omniimageautogen-repository|RES-002]] — Audit OmniImageAutoGen repository (`high`)
 - [x] [[RES-003-audit-google-flow-automation-repository|RES-003]] — Audit Google Flow Automation repository (`high`)
 - [x] [[RES-004-audit-google-flow-suite-repository|RES-004]] — Audit Google Flow Suite repository (`high`)
-- [ ] [[RES-005-verify-upstream-licenses-and-attribution|RES-005]] — Verify upstream licenses and attribution (`critical`)
+- [x] [[RES-005-verify-upstream-licenses-and-attribution|RES-005]] — Verify upstream licenses and attribution (`critical`)
 - [ ] [[RES-006-review-google-ui-automation-and-policy-constraints|RES-006]] — Review Google UI automation and policy constraints (`critical`)
 - [ ] [[RES-007-capture-google-gemini-live-ux-baseline|RES-007]] — Capture Google Gemini live UX baseline (`medium`)
 - [ ] [[RES-008-capture-google-flow-live-ux-baseline|RES-008]] — Capture Google Flow live UX baseline (`medium`)
