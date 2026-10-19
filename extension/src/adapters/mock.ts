@@ -6,6 +6,7 @@ import {
   JobSubmissionResult,
   JobPollResult,
   MediaExtractResult,
+  AdapterError,
   PolicyRefusalError,
   AmbiguousSubmissionError,
   SelectorNotFoundError,
@@ -110,7 +111,11 @@ export class MockSiteAdapter implements SiteAdapter {
   async pollJobStatus(jobId: string): Promise<JobPollResult> {
     const job = this.activeJobs.get(jobId);
     if (!job) {
-      return { jobId, status: 'failed', error: new Error('Job not found') as never };
+      return {
+        jobId,
+        status: 'failed',
+        error: new AdapterError('Job not found', 'UNKNOWN_ERROR', false, false),
+      };
     }
 
     job.step += 1;

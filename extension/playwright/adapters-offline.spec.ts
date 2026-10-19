@@ -106,6 +106,13 @@ test('adapter connection reports false on the offline unapproved-host fixture', 
   await expect(new GeminiSiteAdapter().checkConnection()).resolves.toMatchObject({
     connected: false,
   });
+  const inPageHostRejection = await page.evaluate(() => {
+    return {
+      flowMatches: window.location.hostname === 'flow.google.com',
+      geminiMatches: window.location.hostname === 'gemini.google.com',
+    };
+  });
+  expect(inPageHostRejection).toEqual({ flowMatches: false, geminiMatches: false });
   expect(isFlowCanvas('flow.google.com.evil.invalid')).toBe(false);
   expect(isGeminiChat('gemini.google.com.evil.invalid')).toBe(false);
   expect(isFlowCanvas('notflow.google.com')).toBe(false);

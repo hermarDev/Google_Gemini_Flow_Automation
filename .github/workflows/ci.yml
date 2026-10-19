@@ -90,6 +90,10 @@ jobs:
         working-directory: extension
         run: npm run build
 
+      - name: Run Playwright preview smoke tests
+        working-directory: extension
+        run: npm run test:smoke
+
       - name: Load packaged extension in isolated Chromium
         working-directory: extension
         run: npx playwright test --config=playwright-extension.config.ts
