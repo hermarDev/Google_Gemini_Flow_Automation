@@ -30,7 +30,7 @@ capacity_points: null
 - [x] [[CORE-013-implement-light-dark-and-system-themes|CORE-013]] — Implement light, dark and system themes (`medium`)
 - [x] [[CORE-014-implement-global-navigation-and-route-state|CORE-014]] — Implement global navigation and route state (`medium`)
 - [x] [[CORE-015-implement-app-settings-persistence|CORE-015]] — Implement app settings persistence (`medium`)
-- [ ] [[CORE-016-create-adapter-interfaces-and-mock-transport|CORE-016]] — Create adapter interfaces and mock transport (`medium`)
+- [x] [[CORE-016-create-adapter-interfaces-and-mock-transport|CORE-016]] — Create adapter interfaces and mock transport (`medium`)
 - [ ] [[CORE-017-create-extension-message-protocol|CORE-017]] — Create extension message protocol (`medium`)
 - [ ] [[CORE-018-add-keyboard-navigation-and-accessible-focus|CORE-018]] — Add keyboard navigation and accessible focus (`medium`)
 - [ ] [[CORE-019-establish-component-extension-and-smoke-test-harness|CORE-019]] — Establish component, extension and smoke test harness (`medium`)
