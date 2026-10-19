@@ -27,7 +27,7 @@ extension/
 
 ### Prerequisites
 
-- Node.js >= 20.0.0 (tested on Node v22.x on Fedora Linux)
+- Node.js >= 22.0.0 (tested on Node v22.x on Fedora Linux)
 - npm >= 10.0.0
 - Google Chrome / Chromium >= 116.0 (supporting `chrome.sidePanel`)
 
