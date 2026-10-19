@@ -1,9 +1,9 @@
 ---
 type: sprint
 sprint: "Sprint-00"
-status: planned
+status: in-progress
 created: 2026-10-19
-planned_start: null
+planned_start: 2026-10-19
 planned_end: null
 capacity_points: null
 ---
@@ -15,7 +15,7 @@ capacity_points: null
 
 ## Scope (18 tickets)
 
-- [ ] [[RES-001-audit-flow-automator-repository|RES-001]] — Audit Flow Automator repository (`high`)
+- [x] [[RES-001-audit-flow-automator-repository|RES-001]] — Audit Flow Automator repository (`high`)
 - [ ] [[RES-002-audit-omniimageautogen-repository|RES-002]] — Audit OmniImageAutoGen repository (`high`)
 - [ ] [[RES-003-audit-google-flow-automation-repository|RES-003]] — Audit Google Flow Automation repository (`high`)
 - [ ] [[RES-004-audit-google-flow-suite-repository|RES-004]] — Audit Google Flow Suite repository (`high`)
