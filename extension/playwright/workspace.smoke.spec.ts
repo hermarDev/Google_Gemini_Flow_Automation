@@ -26,3 +26,31 @@ test('workspace deep links restore the selected view without provider access', a
   await expect(page.getByRole('heading', { name: 'Media Library', level: 2 })).toBeVisible();
   await expect(page.getByText('Your library is empty')).toBeVisible();
 });
+
+test('sprint 1 vertical slice: select dummy profile, queue mock job, and inspect persistent queue row (CORE-020)', async ({
+  page,
+}) => {
+  await page.goto(workspaceUrl);
+
+  // Select profile
+  const profileSelect = page.getByTestId('workspace-profile-select');
+  await expect(profileSelect).toBeVisible();
+  await profileSelect.selectOption({ label: 'Veo 2.0 Fast / 6s / 16:9 Landscape' });
+
+  // Type prompt
+  const promptInput = page.getByPlaceholder(
+    'Enter prompt description for camera motion, lighting, and action...'
+  );
+  await promptInput.fill('E2E smoke test: Cyberpunk flying vehicle in neon drizzle');
+
+  // Queue job
+  await page.getByRole('button', { name: 'Queue Jobs' }).click();
+
+  // Verify transition to Queue view with queued job visible
+  await expect(page).toHaveURL(/#\/queue$/);
+  await expect(page.getByRole('heading', { name: /Generation Queue/ })).toBeVisible();
+  await expect(
+    page.getByText('E2E smoke test: Cyberpunk flying vehicle in neon drizzle')
+  ).toBeVisible();
+  await expect(page.getByText('Veo 2.0 Fast / 6s / 16:9 Landscape')).toBeVisible();
+});
