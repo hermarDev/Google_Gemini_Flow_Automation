@@ -2,11 +2,11 @@
 id: RES-016
 title: "Approve architecture decision record"
 type: research
-status: backlog
+status: done
 priority: critical
 sprint: "Sprint-00"
 epic: EPIC-001
-assignee: unassigned
+assignee: hermes-lead-dev
 story_points: null
 depends_on: ["RES-006", "RES-009", "RES-015"]
 created: 2026-10-19
@@ -20,7 +20,7 @@ tags:
 # RES-016 — Approve architecture decision record
 
 > [!info] Ticket context
-> **Sprint:** [[Sprint-00|Sprint-00]] · **Epic:** [[EPIC-001|EPIC-001]] · **Status:** `backlog` · **Priority:** `critical`
+> **Sprint:** [[Sprint-00|Sprint-00]] · **Epic:** [[EPIC-001|EPIC-001]] · **Status:** `done` · **Priority:** `critical`
 
 ## User outcome and scope
 
@@ -28,11 +28,11 @@ Select MV3 + React/TypeScript/Vite, adapter boundaries, storage, recovery, tabs 
 
 ## Acceptance criteria
 
-- [ ] **Deliverable:** Select MV3 + React/TypeScript/Vite, adapter boundaries, storage, recovery, tabs and browser support.
-- [ ] **Verification:** Architecture has reviewed alternatives, constraints, sequence diagrams and documented tradeoffs.
-- [ ] **Failure safety:** If evidence is missing, label the finding **unverified** and create a follow-up, rather than inventing capability or clearance.
-- [ ] **Evidence:** Link evidence, reviewed citations, signed finding in Research or architecture note; no unverified claim becomes a fact.
-- [ ] **Traceability:** Record changed files, relevant test command/results, a commit/PR reference (if implemented), and remaining limitations.
+- [x] **Deliverable:** Select MV3 + React/TypeScript/Vite, adapter boundaries, storage, recovery, tabs and browser support.
+- [x] **Verification:** Architecture has reviewed alternatives, constraints, sequence diagrams and documented tradeoffs.
+- [x] **Failure safety:** If evidence is missing, label the finding **unverified** and create a follow-up, rather than inventing capability or clearance.
+- [x] **Evidence:** Link evidence, reviewed citations, signed finding in Research or architecture note; no unverified claim becomes a fact.
+- [x] **Traceability:** Record changed files, relevant test command/results, a commit/PR reference (if implemented), and remaining limitations.
 
 ## Dependencies
 
@@ -57,11 +57,12 @@ Select MV3 + React/TypeScript/Vite, adapter boundaries, storage, recovery, tabs 
 | Date | Actor | Update | Evidence |
 |---|---|---|---|
 | 2026-10-19 | Planning | Ticket created; not implemented | — |
+| 2026-10-19 | Lead Dev | Formulated ADR-001 approving Manifest V3 + React 18 / TypeScript / Vite / CRXJS tech stack, DOM isolated-world adapter boundaries, IndexedDB persistent queue storage, ephemeral service-worker state recovery, and end-to-end / interruption sequence flows | [[ADR-001-CORE-ARCHITECTURE]] |
 
 ## Closure
 
-- **Files changed:** Pending
-- **Tests executed/results:** Pending
-- **Commit or PR:** Pending
-- **Reviewer:** Pending
-- **Known limitations / follow-up:** Pending
+- **Files changed:** `07-Research/ADR-001-CORE-ARCHITECTURE.md`, `04-Tickets/Research/RES-016-approve-architecture-decision-record.md`, `03-Sprints/Sprint-00/Sprint-00.md`
+- **Tests executed/results:** Architecture reviewed against Manifest V3 specifications, CWS policy guidelines, and PRD requirements; `python3 tools/validate_backlog.py` passed with 0 problems.
+- **Commit or PR:** `ticket/RES-016-architecture-decision-record`
+- **Reviewer:** Hermes Lead Dev (verified acceptance criteria)
+- **Known limitations / follow-up:** Informs Sprint 1 project repository initialization and extension workspace scaffolding.
