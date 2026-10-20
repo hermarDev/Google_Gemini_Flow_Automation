@@ -20,10 +20,12 @@ import {
   createJobExecutionControl,
   updateJobStatus,
 } from '../shared/jobs.ts';
+import { createMessage, parseExtensionMessage } from '../protocol/messages.ts';
 
 export interface TabConnection {
   connected: boolean;
   provider: 'flow' | 'gemini' | null;
+  status?: 'not-ready';
   title?: string;
   url?: string;
 }
@@ -62,16 +64,36 @@ export const SidePanel: React.FC<SidePanelProps> = ({ initialConnection }) => {
     const runtimeApi = typeof chrome !== 'undefined' ? chrome.runtime : undefined;
     if (!tabsApi) return unsubscribe;
 
+    let latestDetection = 0;
+    let readinessInterval: ReturnType<typeof setInterval> | undefined;
+    const stopReadinessPolling = () => {
+      if (readinessInterval) clearInterval(readinessInterval);
+      readinessInterval = undefined;
+    };
+    const updateConnection = (next: TabConnection) => {
+      setConnection((current) =>
+        current.connected === next.connected &&
+        current.provider === next.provider &&
+        current.status === next.status &&
+        current.title === next.title &&
+        current.url === next.url
+          ? current
+          : next
+      );
+    };
     const detectActiveTab = () => {
+      const detection = ++latestDetection;
       if (!tabsApi.query) return;
       tabsApi.query({ active: true, lastFocusedWindow: true }, (tabs) => {
+        if (detection !== latestDetection) return;
         if (runtimeApi?.lastError) {
-          setConnection({ connected: false, provider: null });
+          updateConnection({ connected: false, provider: null });
           return;
         }
         const tab = tabs[0];
         if (!tab?.url) {
-          setConnection({ connected: false, provider: null });
+          stopReadinessPolling();
+          updateConnection({ connected: false, provider: null });
           return;
         }
         try {
@@ -82,13 +104,61 @@ export const SidePanel: React.FC<SidePanelProps> = ({ initialConnection }) => {
               : url.protocol === 'https:' && url.hostname === 'gemini.google.com'
                 ? 'gemini'
                 : null;
-          setConnection(
-            provider
-              ? { connected: true, provider, title: tab.title, url: tab.url }
-              : { connected: false, provider: null, title: tab.title, url: tab.url }
+          if (!provider) {
+            stopReadinessPolling();
+            updateConnection({ connected: false, provider: null, title: tab.title, url: tab.url });
+            return;
+          }
+          if (provider === 'flow') {
+            stopReadinessPolling();
+            updateConnection({ connected: true, provider, title: tab.title, url: tab.url });
+            return;
+          }
+          if (!readinessInterval) {
+            readinessInterval = setInterval(detectActiveTab, 2000);
+          }
+          if (typeof tab.id !== 'number' || !tabsApi.sendMessage) {
+            updateConnection({
+              connected: false,
+              provider,
+              status: 'not-ready',
+              title: tab.title,
+              url: tab.url,
+            });
+            return;
+          }
+          tabsApi.sendMessage(
+            tab.id,
+            createMessage('CHECK_TAB_STATUS', 'sidepanel', { tabId: tab.id }),
+            (rawResponse) => {
+              if (detection !== latestDetection) return;
+              const response = parseExtensionMessage(rawResponse);
+              const ready =
+                !runtimeApi?.lastError &&
+                response.success &&
+                response.message?.type === 'TAB_STATUS_RESULT' &&
+                response.message.payload.tabId === tab.id &&
+                response.message.payload.provider === 'gemini' &&
+                response.message.payload.connected;
+              if (!ready) {
+                readinessInterval ??= setInterval(detectActiveTab, 2000);
+              }
+              updateConnection(
+                ready
+                  ? { connected: true, provider, title: tab.title, url: tab.url }
+                  : {
+                      connected: false,
+                      provider,
+                      status: 'not-ready',
+                      title: tab.title,
+                      url: tab.url,
+                    }
+              );
+            }
           );
         } catch {
-          setConnection({ connected: false, provider: null });
+          stopReadinessPolling();
+          updateConnection({ connected: false, provider: null });
         }
       });
     };
@@ -97,6 +167,7 @@ export const SidePanel: React.FC<SidePanelProps> = ({ initialConnection }) => {
     tabsApi.onActivated?.addListener(detectActiveTab);
     tabsApi.onUpdated?.addListener(detectActiveTab);
     return () => {
+      stopReadinessPolling();
       unsubscribe();
       tabsApi.onActivated?.removeListener(detectActiveTab);
       tabsApi.onUpdated?.removeListener(detectActiveTab);
@@ -352,8 +423,19 @@ export const SidePanel: React.FC<SidePanelProps> = ({ initialConnection }) => {
           <div className="p-2.5 rounded bg-amber-950/30 border border-amber-800/50 flex gap-2 items-start text-amber-200">
             <AlertCircle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
             <div className="text-[11px] leading-tight">
-              <span className="font-semibold block mb-0.5">No Active Google Session</span>
-              Navigate to an active Google Flow or Gemini session to enable automated submission.
+              {connection.status === 'not-ready' && connection.provider === 'gemini' ? (
+                <>
+                  <span className="font-semibold block mb-0.5">Gemini conversation not ready</span>
+                  Open a Gemini conversation, sign in if prompted, and wait for the prompt box to
+                  load. This readiness check does not submit a generation.
+                </>
+              ) : (
+                <>
+                  <span className="font-semibold block mb-0.5">No Active Google Session</span>
+                  Navigate to an active Google Flow or Gemini session to enable automated
+                  submission.
+                </>
+              )}
             </div>
           </div>
         )}
