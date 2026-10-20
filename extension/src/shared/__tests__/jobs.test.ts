@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import {
   getStoredJobs,
   addMockJob,
@@ -7,6 +7,7 @@ import {
   subscribeToJobs,
   JOBS_STORAGE_KEY,
   simulateJobExecution,
+  createJobExecutionControl,
 } from '../jobs.ts';
 import { VEO_FAST_PRESET } from '../profiles.ts';
 
@@ -15,9 +16,33 @@ describe('Persistent Job Queue & Status (CORE-020)', () => {
     localStorage.clear();
   });
 
-  it('initializes with an empty job list when storage is clean', async () => {
-    const jobs = await getStoredJobs();
-    expect(jobs).toEqual([]);
+  it('rejects malformed persisted job records instead of trusting the TypeScript type', async () => {
+    localStorage.setItem(
+      JOBS_STORAGE_KEY,
+      JSON.stringify([
+        {
+          id: 'job-invalid-status',
+          prompt: 'Malformed stored job',
+          profileId: 'omni-flash',
+          profileName: 'Omni Flash',
+          provider: 'flow',
+          status: 'rendered',
+          createdAt: 1,
+          updatedAt: 1,
+          credits: 15,
+          aspect: '9:16',
+          duration: '10s',
+        },
+      ])
+    );
+
+    await expect(getStoredJobs()).rejects.toThrow('Stored job at index 0 is invalid');
+  });
+
+  it('rejects corrupted JSON in local storage without returning an empty queue', async () => {
+    localStorage.setItem(JOBS_STORAGE_KEY, '{not valid JSON');
+
+    await expect(getStoredJobs()).rejects.toThrow();
   });
 
   it('adds and persists mock generation job with selected profile attributes', async () => {
@@ -80,6 +105,201 @@ describe('Persistent Job Queue & Status (CORE-020)', () => {
     const target = stored.find((j) => j.id === job.id);
     expect(target?.status).toBe('needs-review');
     expect(target?.errorMessage).toContain('Ambiguous submission state');
+  });
+
+  it('serializes concurrent job writes so no enqueue is lost', async () => {
+    const jobs = await Promise.all([
+      addMockJob({ prompt: 'Concurrent first job' }),
+      addMockJob({ prompt: 'Concurrent second job' }),
+    ]);
+
+    const stored = await getStoredJobs();
+    expect(stored.map((job) => job.id).sort()).toEqual(jobs.map((job) => job.id).sort());
+  });
+
+  it('uses the cross-context Web Lock for Chrome storage mutations', async () => {
+    const originalChrome = globalThis.chrome;
+    const originalLocks = navigator.locks;
+    const stored: Record<string, unknown> = {};
+    const lockRequest = vi.fn(
+      async (_name: string, _options: LockOptions, callback: () => Promise<unknown>) => callback()
+    );
+    Object.defineProperty(navigator, 'locks', {
+      configurable: true,
+      value: { request: lockRequest },
+    });
+    Object.defineProperty(globalThis, 'chrome', {
+      configurable: true,
+      value: {
+        storage: {
+          local: {
+            get: vi.fn(async (key: string) => ({ [key]: stored[key] })),
+            set: vi.fn(async (values: Record<string, unknown>) => Object.assign(stored, values)),
+          },
+        },
+      },
+    });
+
+    try {
+      await Promise.all([
+        addMockJob({ prompt: 'Cross-context first' }),
+        addMockJob({ prompt: 'Cross-context second' }),
+      ]);
+      expect(lockRequest).toHaveBeenCalledTimes(2);
+      expect(stored[JOBS_STORAGE_KEY] as unknown[]).toHaveLength(2);
+    } finally {
+      Object.defineProperty(globalThis, 'chrome', { configurable: true, value: originalChrome });
+      Object.defineProperty(navigator, 'locks', { configurable: true, value: originalLocks });
+    }
+  });
+
+  it('reports storage read failures rather than overwriting the queue', async () => {
+    const originalChrome = globalThis.chrome;
+    const existingJob = { id: 'existing-job', status: 'pending' };
+    const set = vi.fn();
+    Object.defineProperty(globalThis, 'chrome', {
+      configurable: true,
+      value: {
+        storage: {
+          local: {
+            get: vi.fn(async () => {
+              throw new Error('storage read unavailable');
+            }),
+            set,
+          },
+        },
+      },
+    });
+
+    try {
+      await expect(addMockJob({ prompt: 'Do not replace stored queue' })).rejects.toThrow(
+        'storage read unavailable'
+      );
+      expect(existingJob.status).toBe('pending');
+      expect(set).not.toHaveBeenCalled();
+    } finally {
+      Object.defineProperty(globalThis, 'chrome', { configurable: true, value: originalChrome });
+    }
+  });
+
+  it('reports storage write failures instead of claiming a job was saved', async () => {
+    const originalChrome = globalThis.chrome;
+    Object.defineProperty(globalThis, 'chrome', {
+      configurable: true,
+      value: {
+        storage: {
+          local: {
+            get: vi.fn(async () => ({})),
+            set: vi.fn(async () => {
+              throw new Error('storage unavailable');
+            }),
+          },
+        },
+      },
+    });
+
+    try {
+      await expect(addMockJob({ prompt: 'Must not pretend to persist' })).rejects.toThrow(
+        'storage unavailable'
+      );
+    } finally {
+      Object.defineProperty(globalThis, 'chrome', { configurable: true, value: originalChrome });
+    }
+  });
+
+  it('does not overwrite a terminal job status with stale mock progress', async () => {
+    const job = await addMockJob({ prompt: 'Terminal status guard test' });
+    await updateJobStatus(job.id, 'failed', { errorMessage: 'Cancelled by user.' });
+
+    const staleUpdate = await updateJobStatus(
+      job.id,
+      'submitting',
+      { progressPercent: 15 },
+      { expectedStatuses: ['pending'] }
+    );
+
+    expect(staleUpdate?.status).toBe('failed');
+    expect(staleUpdate?.errorMessage).toBe('Cancelled by user.');
+    expect((await getStoredJobs()).find((item) => item.id === job.id)?.status).toBe('failed');
+  });
+
+  it('does not advance a cancelled mock execution', async () => {
+    const control = createJobExecutionControl();
+    control.pause();
+    const job = await addMockJob({ prompt: 'Cancelable mock job', control });
+    const execution = simulateJobExecution(job.id, 'none', control);
+
+    await new Promise((resolve) => setTimeout(resolve, 70));
+    const pausedJob = (await getStoredJobs()).find((item) => item.id === job.id);
+    expect(pausedJob?.status).toBe('pending');
+
+    control.cancel();
+    await execution;
+    const cancelledJob = (await getStoredJobs()).find((item) => item.id === job.id);
+    expect(cancelledJob?.status).toBe('pending');
+  });
+
+  it('cancels a paused execution and persists its terminal failure status', async () => {
+    const control = createJobExecutionControl();
+    control.pause();
+    const job = await addMockJob({ prompt: 'Persist cancellation status', control });
+    await updateJobStatus(job.id, 'submitting', {}, { expectedStatuses: ['pending'] });
+
+    const cancelled = await updateJobStatus(
+      job.id,
+      'failed',
+      { errorMessage: 'Cancelled by user.' },
+      { expectedStatuses: ['pending', 'submitting', 'generating'] }
+    );
+
+    expect(cancelled?.status).toBe('failed');
+    expect(cancelled?.errorMessage).toBe('Cancelled by user.');
+  });
+
+  it('subscribes to Chrome storage changes and cleans up listener on unsubscribe', async () => {
+    let listener: ((changes: Record<string, chrome.storage.StorageChange>) => void) | undefined;
+    const addListener = vi.fn((callback: typeof listener) => {
+      listener = callback;
+    });
+    const removeListener = vi.fn();
+    const originalChrome = globalThis.chrome;
+    const validStoredJob = {
+      id: 'changed-in-another-context',
+      prompt: 'Stored from another context',
+      profileId: 'omni-flash',
+      profileName: 'Omni Flash',
+      provider: 'flow',
+      status: 'pending',
+      createdAt: 1,
+      updatedAt: 1,
+      credits: 15,
+      aspect: '9:16',
+      duration: '10s',
+    };
+    Object.defineProperty(globalThis, 'chrome', {
+      configurable: true,
+      value: {
+        storage: {
+          local: {
+            get: vi.fn(async () => ({
+              [JOBS_STORAGE_KEY]: [validStoredJob],
+            })),
+          },
+          onChanged: { addListener, removeListener },
+        },
+      },
+    });
+
+    try {
+      const callback = vi.fn();
+      const unsubscribe = subscribeToJobs(callback);
+      listener?.({ [JOBS_STORAGE_KEY]: { newValue: [{ id: 'changed-in-another-context' }] } });
+      await vi.waitFor(() => expect(callback).toHaveBeenCalledWith([validStoredJob]));
+      unsubscribe();
+      expect(removeListener).toHaveBeenCalledWith(listener);
+    } finally {
+      Object.defineProperty(globalThis, 'chrome', { configurable: true, value: originalChrome });
+    }
   });
 
   it('subscribes to job changes and cleans up listener on unsubscribe', async () => {

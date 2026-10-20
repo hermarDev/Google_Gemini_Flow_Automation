@@ -87,23 +87,52 @@ describe('Extension Message Protocol & Security Guards (CORE-017)', () => {
       expect(res.reason).toContain('Untrusted sender origin');
     });
 
-    it('rejects messages when extension ID does not match expected ID', () => {
-      const res = validateMessageOrigin({ id: 'wrong-id' }, 'correct-extension-id');
+    it('rejects missing extension ID when an expected ID is configured', () => {
+      const res = validateMessageOrigin(
+        { origin: 'chrome-extension://correct-extension-id' },
+        'correct-extension-id'
+      );
       expect(res.valid).toBe(false);
-      expect(res.reason).toContain('Unauthorized extension ID');
+      expect(res.reason).toContain('missing');
+    });
+
+    it.each([
+      'https://flow.google.com.attacker.invalid/path',
+      'https://gemini.google.com.attacker.invalid/path',
+      'https://flow.google.com@attacker.invalid/path',
+      'chrome-extension://attacker-id/panel.html',
+      'chrome-extension://',
+    ])('rejects spoofed sender URL %s', (url) => {
+      expect(validateMessageOrigin({ url }, 'correct-extension-id').valid).toBe(false);
+    });
+
+    it('rejects a spoofed URL even when the origin is valid', () => {
+      const res = validateMessageOrigin({
+        origin: 'https://flow.google.com',
+        url: 'https://flow.google.com.attacker.invalid/panel',
+      });
+      expect(res.valid).toBe(false);
+    });
+
+    it('accepts only the configured extension URL and exact Google app hosts', () => {
+      expect(validateMessageOrigin({ id: 'abcdefghijklmnop' }, 'abcdefghijklmnop').valid).toBe(
+        true
+      );
+      expect(validateMessageOrigin({ url: 'https://flow.google.com/project/1' }).valid).toBe(true);
+      expect(validateMessageOrigin({ url: 'https://gemini.google.com/app' }).valid).toBe(true);
     });
   });
 
   describe('MessageRouter Dispatching', () => {
     it('dispatches valid message to registered handler', async () => {
-      const router = new MessageRouter();
+      const router = new MessageRouter('abcdefghijklmnop');
       const handler = vi.fn().mockResolvedValue({ status: 'pong-received' });
 
       router.register('PING', handler);
 
       const pingMsg = createMessage('PING', 'sidepanel', { nonce: 'test-nonce' });
       const response = await router.dispatch(pingMsg, {
-        origin: 'chrome-extension://test-extension',
+        id: 'abcdefghijklmnop',
       });
 
       expect(response.handled).toBe(true);

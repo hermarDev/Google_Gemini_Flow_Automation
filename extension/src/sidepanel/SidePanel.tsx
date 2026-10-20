@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Play,
   Pause,
@@ -12,7 +12,14 @@ import {
 } from 'lucide-react';
 import { DEFAULT_OMNI_PRESET, VideoPreset } from '../shared/types.ts';
 import { AVAILABLE_PROFILES, getActiveProfile, setActiveProfile } from '../shared/profiles.ts';
-import { JobItem, getStoredJobs, addMockJob, subscribeToJobs } from '../shared/jobs.ts';
+import {
+  JobItem,
+  getStoredJobs,
+  addMockJob,
+  subscribeToJobs,
+  createJobExecutionControl,
+  updateJobStatus,
+} from '../shared/jobs.ts';
 
 export interface TabConnection {
   connected: boolean;
@@ -25,15 +32,10 @@ export interface SidePanelProps {
   initialConnection?: TabConnection;
 }
 
-export const SidePanel: React.FC<SidePanelProps> = ({
-  initialConnection = {
-    connected: true,
-    provider: 'flow',
-    title: 'Flow - Project 01',
-    url: 'https://flow.google.com/project/demo',
-  },
-}) => {
-  const [connection] = useState<TabConnection>(initialConnection);
+export const SidePanel: React.FC<SidePanelProps> = ({ initialConnection }) => {
+  const [connection, setConnection] = useState<TabConnection>(
+    initialConnection ?? { connected: false, provider: null }
+  );
   const [preset, setPreset] = useState<VideoPreset>(DEFAULT_OMNI_PRESET);
   const [prompt, setPrompt] = useState('');
   const [failureMode, setFailureMode] = useState<
@@ -41,11 +43,11 @@ export const SidePanel: React.FC<SidePanelProps> = ({
   >('none');
   const [isQueueActive, setIsQueueActive] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
-  const [activeStatus, setActiveStatus] = useState<
-    'idle' | 'rendering' | 'needs-review' | 'completed'
-  >('idle');
-  const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const [activeStatus, setActiveStatus] = useState<'idle' | 'submitting'>('idle');
   const [storedJobs, setStoredJobs] = useState<JobItem[]>([]);
+  const [pausedJobIds, setPausedJobIds] = useState<Set<string>>(() => new Set());
+  const activeExecution = useRef<ReturnType<typeof createJobExecutionControl> | null>(null);
+  const executionById = useRef(new Map<string, ReturnType<typeof createJobExecutionControl>>());
 
   useEffect(() => {
     getActiveProfile().then(setPreset);
@@ -53,8 +55,53 @@ export const SidePanel: React.FC<SidePanelProps> = ({
     const unsubscribe = subscribeToJobs((jobs) => {
       setStoredJobs(jobs);
     });
-    return unsubscribe;
-  }, []);
+
+    if (initialConnection) return unsubscribe;
+
+    const tabsApi = typeof chrome !== 'undefined' ? chrome.tabs : undefined;
+    const runtimeApi = typeof chrome !== 'undefined' ? chrome.runtime : undefined;
+    if (!tabsApi) return unsubscribe;
+
+    const detectActiveTab = () => {
+      if (!tabsApi.query) return;
+      tabsApi.query({ active: true, lastFocusedWindow: true }, (tabs) => {
+        if (runtimeApi?.lastError) {
+          setConnection({ connected: false, provider: null });
+          return;
+        }
+        const tab = tabs[0];
+        if (!tab?.url) {
+          setConnection({ connected: false, provider: null });
+          return;
+        }
+        try {
+          const url = new URL(tab.url);
+          const provider =
+            url.protocol === 'https:' && url.hostname === 'flow.google.com'
+              ? 'flow'
+              : url.protocol === 'https:' && url.hostname === 'gemini.google.com'
+                ? 'gemini'
+                : null;
+          setConnection(
+            provider
+              ? { connected: true, provider, title: tab.title, url: tab.url }
+              : { connected: false, provider: null, title: tab.title, url: tab.url }
+          );
+        } catch {
+          setConnection({ connected: false, provider: null });
+        }
+      });
+    };
+
+    detectActiveTab();
+    tabsApi.onActivated?.addListener(detectActiveTab);
+    tabsApi.onUpdated?.addListener(detectActiveTab);
+    return () => {
+      unsubscribe();
+      tabsApi.onActivated?.removeListener(detectActiveTab);
+      tabsApi.onUpdated?.removeListener(detectActiveTab);
+    };
+  }, [initialConnection]);
 
   const handleProfileChange = async (profileId: string) => {
     const updated = await setActiveProfile(profileId);
@@ -63,26 +110,136 @@ export const SidePanel: React.FC<SidePanelProps> = ({
 
   const handleStart = async () => {
     if (!prompt.trim() || !connection.connected) return;
+    const execution = createJobExecutionControl();
+    activeExecution.current = execution;
+    setIsPaused(false);
     setIsQueueActive(true);
-    setActiveStatus('rendering');
-    setElapsedSeconds(1);
+    setActiveStatus('submitting');
 
-    await addMockJob({
-      prompt,
-      profile: preset,
-      failureMode,
-    });
+    try {
+      const job = await addMockJob({
+        prompt,
+        profile: preset,
+        failureMode,
+        control: execution,
+      });
+      if (execution.signal.aborted) {
+        await updateJobStatus(
+          job.id,
+          'failed',
+          { errorMessage: 'Cancelled by user before mock execution finished.' },
+          { expectedStatuses: ['pending', 'submitting', 'generating'] }
+        );
+        return;
+      }
+      executionById.current.set(job.id, execution);
+    } catch {
+      if (activeExecution.current === execution) {
+        activeExecution.current = null;
+        setIsQueueActive(false);
+        setActiveStatus('idle');
+      }
+    }
   };
 
   const handleTogglePause = () => {
-    setIsPaused((prev) => !prev);
+    const execution = activeExecution.current;
+    if (!execution) return;
+    const activeJobId = [...executionById.current].find(
+      ([, jobExecution]) => jobExecution === execution
+    )?.[0];
+    const shouldPause = !isPaused;
+    if (shouldPause) execution.pause();
+    else execution.resume();
+    if (activeJobId) {
+      setPausedJobIds((current) => {
+        const next = new Set(current);
+        if (shouldPause) next.add(activeJobId);
+        else next.delete(activeJobId);
+        return next;
+      });
+    }
+    setIsPaused(shouldPause);
   };
 
-  const handleStop = () => {
+  const handleStop = async () => {
+    const execution = activeExecution.current;
+    if (execution) {
+      execution.cancel();
+      activeExecution.current = null;
+      setIsQueueActive(false);
+      setIsPaused(false);
+      setActiveStatus('idle');
+
+      try {
+        const activeJobId = [...executionById.current].find(
+          ([, jobExecution]) => jobExecution === execution
+        )?.[0];
+        if (activeJobId) {
+          await updateJobStatus(
+            activeJobId,
+            'failed',
+            { errorMessage: 'Cancelled by user before mock execution finished.' },
+            { expectedStatuses: ['pending', 'submitting', 'generating'] }
+          );
+        }
+      } finally {
+        for (const [jobId, jobExecution] of executionById.current) {
+          if (jobExecution === execution) executionById.current.delete(jobId);
+        }
+      }
+      return;
+    }
+
     setIsQueueActive(false);
-    setActiveStatus('idle');
-    setElapsedSeconds(0);
     setIsPaused(false);
+  };
+
+  const toggleJobPause = (jobId: string) => {
+    const execution = executionById.current.get(jobId);
+    if (!execution || execution.signal.aborted) return;
+    execution.pause();
+    setPausedJobIds((current) => new Set(current).add(jobId));
+  };
+
+  const resumeJob = (jobId: string) => {
+    executionById.current.get(jobId)?.resume();
+    setPausedJobIds((current) => {
+      const next = new Set(current);
+      next.delete(jobId);
+      return next;
+    });
+  };
+
+  const toggleJobPauseState = (jobId: string) => {
+    if (pausedJobIds.has(jobId)) resumeJob(jobId);
+    else toggleJobPause(jobId);
+  };
+
+  const cancelJob = async (jobId: string) => {
+    const execution = executionById.current.get(jobId);
+    if (!execution) return;
+
+    execution.cancel();
+    executionById.current.delete(jobId);
+    setPausedJobIds((current) => {
+      const next = new Set(current);
+      next.delete(jobId);
+      return next;
+    });
+    if (activeExecution.current === execution) {
+      activeExecution.current = null;
+      setIsQueueActive(false);
+      setIsPaused(false);
+      setActiveStatus('idle');
+    }
+
+    await updateJobStatus(
+      jobId,
+      'failed',
+      { errorMessage: 'Cancelled by user before mock execution finished.' },
+      { expectedStatuses: ['pending', 'submitting', 'generating'] }
+    );
   };
 
   const openWorkspace = () => {
@@ -287,38 +444,20 @@ export const SidePanel: React.FC<SidePanelProps> = ({
           </select>
         </section>
 
-        {/* Active Queue Status / Live Monitor */}
+        {/* Determinate simulation status for offline mock execution */}
         {isQueueActive && (
           <section className="rounded border border-zinc-800 bg-zinc-900/60 p-3 space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-[11px] uppercase tracking-wider font-semibold text-zinc-400">
-                Queue Status
+                Mock Job Simulation
               </span>
-              <div className="flex items-center gap-1.5">
-                {activeStatus === 'rendering' && (
-                  <RefreshCw className="w-3 h-3 text-blue-400 animate-spin" />
-                )}
-                {activeStatus === 'completed' && (
-                  <CheckCircle2 className="w-3 h-3 text-emerald-400" />
-                )}
-                <span className="capitalize font-mono text-[11px] text-zinc-200">
-                  {isPaused ? 'Paused' : activeStatus}
-                </span>
-              </div>
+              <span className="text-[10px] text-zinc-400">No Google job was submitted.</span>
             </div>
-
-            <div className="w-full bg-zinc-800 rounded-full h-1.5 overflow-hidden">
-              <div
-                className={`h-full transition-all duration-300 ${
-                  isPaused ? 'bg-amber-500' : 'bg-blue-500'
-                }`}
-                style={{ width: `${Math.min(elapsedSeconds * 10, 100)}%` }}
-              />
+            <div className="font-mono text-[11px] text-zinc-200">
+              {isPaused ? 'Paused' : activeStatus}
             </div>
-
-            <div className="flex justify-between text-[10px] text-zinc-500 font-mono">
-              <span>Elapsed: {elapsedSeconds}s</span>
-              <span>1 / 1 Complete</span>
+            <div className="text-[10px] text-zinc-500">
+              Progress and timing shown here are local test simulation only.
             </div>
           </section>
         )}
@@ -354,6 +493,38 @@ export const SidePanel: React.FC<SidePanelProps> = ({
                       {job.errorMessage}
                     </div>
                   )}
+                  {['pending', 'submitting', 'generating'].includes(job.status) &&
+                    executionById.current.has(job.id) && (
+                      <div className="flex gap-2">
+                        {pausedJobIds.has(job.id) ? (
+                          <button
+                            type="button"
+                            onClick={() => toggleJobPauseState(job.id)}
+                            className="text-[10px] text-amber-300 underline"
+                            aria-label={`Resume ${job.prompt}`}
+                          >
+                            Resume
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => toggleJobPauseState(job.id)}
+                            className="text-[10px] text-amber-300 underline"
+                            aria-label={`Pause ${job.prompt}`}
+                          >
+                            Pause
+                          </button>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => cancelJob(job.id)}
+                          className="text-[10px] text-rose-300 underline"
+                          aria-label={`Cancel ${job.prompt}`}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    )}
                 </div>
               ))}
             </div>

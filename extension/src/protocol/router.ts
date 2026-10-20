@@ -14,7 +14,11 @@ export class MessageRouter {
   private handlers = new Map<string, MessageHandler<never>>();
   private expectedExtensionId?: string;
 
-  constructor(expectedExtensionId?: string) {
+  constructor(
+    expectedExtensionId = typeof chrome !== 'undefined' && chrome.runtime?.id
+      ? chrome.runtime.id
+      : undefined
+  ) {
     this.expectedExtensionId = expectedExtensionId;
   }
 

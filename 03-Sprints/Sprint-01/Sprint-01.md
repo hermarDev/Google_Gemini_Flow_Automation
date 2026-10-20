@@ -34,7 +34,7 @@ capacity_points: null
 - [x] [[CORE-017-create-extension-message-protocol|CORE-017]] — Create extension message protocol (`medium`)
 - [x] [[CORE-018-add-keyboard-navigation-and-accessible-focus|CORE-018]] — Add keyboard navigation and accessible focus (`medium`)
 - [ ] [[CORE-019-establish-component-extension-and-smoke-test-harness|CORE-019]] — Establish component, extension and smoke test harness (`medium`) — PR #37 submitted and all CI checks passed; in review.
-- [ ] [[CORE-020-deliver-sprint-1-vertical-slice|CORE-020]] — Deliver Sprint 1 vertical slice (`medium`) — implemented, verified, PR submitted for review.
+- [ ] [[CORE-020-deliver-sprint-1-vertical-slice|CORE-020]] — Deliver Sprint 1 vertical slice (`medium`) — local review remediation implemented and verified; independent code review and GitHub integration pending.
 
 ## Execution policy
 
@@ -45,9 +45,9 @@ capacity_points: null
 
 ## Sprint review and retrospective
 
-- **Demo evidence:** Pending
-- **Completed / carried forward:** Pending
-- **Bugs and regressions:** Pending
-- **Security/licensing/budget notes:** Pending
-- **Retro: Keep / Improve / Try:** Pending
-- **Go / no-go and approver:** Pending
+- **Demo evidence:** Offline packaged MV3 extension smoke pass; no live Google generation or screenshot evidence.
+- **Completed / carried forward:** CORE-020 implementation and local review remediation validated; awaiting independent code review and GitHub integration before ticket closure.
+- **Bugs and regressions:** Cancellation after `submitting` now persists a terminal failure status and is covered by regression test; cross-context queue concurrency remains unproven.
+- **Security/licensing/budget notes:** Exact approved sender-host checks and sender extension-ID checks are tested; no Google credits used.
+- **Retro: Keep / Improve / Try:** Keep exact-host protocol guards; improve queue concurrency evidence across separate execution contexts.
+- **Go / no-go and approver:** No-go for sprint closure until external PR approval and integration; PRs #37/#38 remain author-owned and open.

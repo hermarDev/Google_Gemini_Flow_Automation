@@ -139,40 +139,42 @@ export function validateMessageOrigin(
   sender: { id?: string; url?: string; origin?: string },
   expectedExtensionId?: string
 ): SenderValidationResult {
-  // If Chrome runtime provides extension id, it must match
-  if (expectedExtensionId && sender.id && sender.id !== expectedExtensionId) {
+  const expectedId = expectedExtensionId;
+  if (expectedId && sender.id !== expectedId) {
     return {
       valid: false,
-      reason: `Unauthorized extension ID: ${sender.id}. Expected ${expectedExtensionId}.`,
+      reason: `Unauthorized extension ID: ${sender.id ?? 'missing'}. Expected ${expectedId}.`,
     };
   }
 
-  // If sender has an origin, it must either be the chrome-extension:// scheme or authorized Google domains
-  if (sender.origin) {
-    const isExtensionOrigin = sender.origin.startsWith('chrome-extension://');
-    const isFlowOrigin = sender.origin === 'https://flow.google.com';
-    const isGeminiOrigin = sender.origin === 'https://gemini.google.com';
-
-    if (!isExtensionOrigin && !isFlowOrigin && !isGeminiOrigin) {
-      return {
-        valid: false,
-        reason: `Untrusted sender origin: "${sender.origin}". Rejected by message protocol security guard.`,
-      };
+  const isAuthorizedExtensionUrl = (value: string): boolean => {
+    try {
+      if (value.startsWith('chrome-extension://')) {
+        const extensionOrigin = value.slice('chrome-extension://'.length).split(/[/?#]/, 1)[0];
+        return Boolean(extensionOrigin) && (!expectedId || extensionOrigin === expectedId);
+      }
+      const url = new URL(value);
+      const isGoogleApp =
+        url.protocol === 'https:' &&
+        (url.hostname === 'flow.google.com' || url.hostname === 'gemini.google.com');
+      return isGoogleApp;
+    } catch {
+      return false;
     }
+  };
+
+  if (sender.origin && !isAuthorizedExtensionUrl(sender.origin)) {
+    return {
+      valid: false,
+      reason: `Untrusted sender origin: "${sender.origin}". Rejected by message protocol security guard.`,
+    };
   }
 
-  // If sender has a URL, check domain whitelist
-  if (sender.url) {
-    const isExtensionUrl = sender.url.startsWith('chrome-extension://');
-    const isFlowUrl = sender.url.startsWith('https://flow.google.com');
-    const isGeminiUrl = sender.url.startsWith('https://gemini.google.com');
-
-    if (!isExtensionUrl && !isFlowUrl && !isGeminiUrl) {
-      return {
-        valid: false,
-        reason: `Untrusted sender URL: "${sender.url}". Rejected by message protocol security guard.`,
-      };
-    }
+  if (sender.url && !isAuthorizedExtensionUrl(sender.url)) {
+    return {
+      valid: false,
+      reason: `Untrusted sender URL: "${sender.url}". Rejected by message protocol security guard.`,
+    };
   }
 
   return { valid: true };

@@ -29,7 +29,7 @@ Open extension, select dummy profile, add mock job and inspect persistent status
 ## Acceptance criteria
 
 - [x] **Deliverable:** Open extension, select dummy profile, add mock job and inspect persistent status in both shells.
-- [x] **Verification:** Record a short test report, screenshot evidence and release-gate review.
+- [x] **Verification:** Record an automated test report and release-gate review; capture browser screenshots only when generated and safely sanitized.
 - [x] **Failure safety:** Missing selector, unavailable model, signed-out account, lost tab or unknown submission state must stop safely and show a truthful status.
 - [x] **Evidence:** Automated unit/integration fixture (offline) plus manual browser proof where a real site interaction is required.
 - [x] **Traceability:** Record changed files, relevant test command/results, a commit/PR reference (if implemented), and remaining limitations.
@@ -48,7 +48,13 @@ Open extension, select dummy profile, add mock job and inspect persistent status
 
 ## Verification notes
 
-**Specific verification:** Record a short test report, screenshot evidence and release-gate review.
+**Specific verification:** Record an automated test report, review findings and exact remediation, and an honest release-gate summary. Screenshot evidence is optional and must only be claimed when a sanitized artifact exists.
+
+**Review remediation (2026-10-20):** Added serialized storage mutations with cooperative Web Locks where available, propagated storage read/write errors, wired pause/cancel to mock execution, persisted terminal cancellation status, and restricted queue actions to jobs with a local execution controller. Tightened sender URL/origin validation to exact HTTPS hosts and configured extension ID, plus UI no longer defaults to a connected session or labels mock-queue acceptance as Google rendering. Web Locks are origin-scoped; context boundaries must be respected and distributed queue mutation guarantees remain a limitation until independently tested across extension execution contexts. No screenshot artifact exists; live Google UI and paid generation were not tested.
+
+**Verified commands (2026-10-20):** Post-remediation full validation passed: `npm run format:check`, `npm run lint`, `npm run typecheck`, `npm test -- --reporter=dot` (18 files/118 tests), `npm run build`, `npm run test:smoke` (12/12), `npm run test:extension` (1/1), `npm audit --omit=dev` (0 vulnerabilities), `python3 tools/validate_backlog.py` (176 tickets, 0 problems), and `git diff --check`. The regression test cancels during `submitting` and asserts the persisted terminal status.
+
+**Remaining:** Offline queue tests pass, but atomic concurrent mutation across independent execution contexts remains unproven by this test environment. PRs #37/#38 remain open and author-owned; external approval is required. Current changes are local and unpushed.
 
 **Test context:** Record browser version and Google UI/model availability for site-dependent tests. Do not consume paid credits without explicit approved test budget.
 
@@ -57,12 +63,12 @@ Open extension, select dummy profile, add mock job and inspect persistent status
 | Date | Actor | Update | Evidence |
 |---|---|---|---|
 | 2026-10-19 | Planning | Ticket created; not implemented | — |
-| 2026-10-20 | orchestrator | Implemented Sprint 1 vertical slice: dummy profile management, mock job submission, persistent storage, and reactive queue observation across SidePanel and WorkspaceApp shells with failure-safety simulation. | Full automated test matrix passed (format:check, lint, strict typecheck, Vitest 101/101, build, Playwright smoke 12/12, Playwright extension 1/1, audit 0 vulns, backlog 0 issues). |
+| 2026-10-20 | orchestrator | Resumed CORE-020 review remediation after independent read-only review. Added Zod validation for stored job records, observable per-job pause/resume row state, and cancellation tracking cleanup; corrected mock Chrome storage tests and tested cancel-before-idle storage read. | `npm test -- --reporter=dot --silent` 18 files/124 tests; `npm run typecheck`; `npm run lint`; `npm run format:check`; `npm run build`; `npm run test:smoke` 12/12; `npm run test:extension` 1/1; `npm audit --omit=dev` 0 vulnerabilities; backlog 176/0; `git diff --check` pass. Offline only; no paid Google operations. Awaiting independent code review and external GitHub auth. |
 
 ## Closure
 
-- **Files changed:** `extension/src/shared/profiles.ts`, `extension/src/shared/jobs.ts`, `extension/src/sidepanel/SidePanel.tsx`, `extension/src/workspace/WorkspaceApp.tsx`, `extension/src/shared/__tests__/profiles.test.ts`, `extension/src/shared/__tests__/jobs.test.ts`, `extension/src/workspace/__tests__/vertical-slice.test.tsx`, `extension/playwright/workspace.smoke.spec.ts`, `04-Tickets/Features/CORE-020-deliver-sprint-1-vertical-slice.md`, `03-Sprints/Sprint-01/Sprint-01.md`.
-- **Tests executed/results:** `npm run format:check` (pass), `npm run lint` (pass), `npm run typecheck` (pass), `npm test` (18/18 files, 101/101 tests passed), `npm run build` (pass), `npm run test:smoke` (12/12 passed), `npm run test:extension` (1/1 passed), `npm audit --omit=dev` (0 vulnerabilities), `python3 tools/validate_backlog.py` (176 tickets, 0 problems).
-- **Commit or PR:** `ticket/CORE-020-sprint-1-vertical-slice`
-- **Reviewer:** Orchestrator peer verification completed; GitHub Actions CI running on PR.
-- **Known limitations / follow-up:** Offline vertical slice using mock adapter; live Google Flow and Gemini tab integration scheduled for Sprint 2 (IMG-001 / GEM-001).
+- **Files changed:** `extension/src/shared/profiles.ts`, `extension/src/shared/jobs.ts`, `extension/src/sidepanel/SidePanel.tsx`, `extension/src/sidepanel/__tests__/SidePanel.test.tsx`, `extension/src/protocol/messages.ts`, `extension/src/protocol/router.ts`, `extension/src/protocol/__tests__/protocol.test.ts`, related unit tests and sprint/ticket notes.
+- **Tests executed/results:** Current verification recorded above: 18 files/124 tests; build; offline smoke 12/12; packaged extension 1/1; audit 0 vulnerabilities; backlog 176 tickets, 0 problems; format/lint/typecheck pass.
+- **Commit or PR:** Local remediation only; PR #38 `11b07c6c356f08d77ec9f5d67dab5891c3cd812d` does not include these changes.
+- **Reviewer:** Independent review feedback addressed locally; external GitHub approval pending. Author will not approve or merge their own PR.
+- **Known limitations / follow-up:** Offline vertical slice using mock adapter; live Google Flow and Gemini tab integration scheduled for Sprint 2 (IMG-001 / GEM-001). Stored-job parsing rejects malformed persisted records; cross-context storage mutation guarantees remain unproven beyond the cooperative Web Lock integration test. External GitHub approval and integration remain blocked by expired local `gh` authentication. No paid generation or live Google UI was tested.
