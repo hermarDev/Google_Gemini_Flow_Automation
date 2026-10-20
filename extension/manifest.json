@@ -1,0 +1,33 @@
+{
+  "manifest_version": 3,
+  "name": "AI Media Automator for Google Flow & Gemini",
+  "version": "0.1.0",
+  "description": "Local-first automation companion for Google Flow video and Gemini image batch creation.",
+  "action": {
+    "default_title": "Open AI Media Automator"
+  },
+  "side_panel": {
+    "default_path": "src/sidepanel/index.html"
+  },
+  "background": {
+    "service_worker": "src/background/index.ts",
+    "type": "module"
+  },
+  "permissions": ["sidePanel", "storage", "downloads", "activeTab"],
+  "host_permissions": ["https://flow.google.com/*", "https://gemini.google.com/*"],
+  "content_scripts": [
+    {
+      "matches": ["https://flow.google.com/*"],
+      "js": ["src/content/flow.ts"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://gemini.google.com/*"],
+      "js": ["src/content/gemini.ts"],
+      "run_at": "document_idle"
+    }
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self';"
+  }
+}

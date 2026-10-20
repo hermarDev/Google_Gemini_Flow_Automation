@@ -1,0 +1,99 @@
+name: CI Quality Gate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  backlog-validation:
+    name: Backlog Integrity Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Validate Markdown Backlog
+        run: python3 tools/validate_backlog.py
+
+  extension-quality-gate:
+    name: Extension Lint, Typecheck, Test & Build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [22.x]
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: extension/package-lock.json
+
+      - name: Install dependencies (clean install)
+        working-directory: extension
+        run: npm ci
+
+      - name: Check code formatting (Prettier)
+        working-directory: extension
+        run: npm run format:check
+
+      - name: Lint source code (ESLint)
+        working-directory: extension
+        run: npm run lint
+
+      - name: Typecheck TypeScript (Strict)
+        working-directory: extension
+        run: npm run typecheck
+
+      - name: Build production extension bundle (Vite)
+        working-directory: extension
+        run: npm run build
+
+      - name: Run automated test suite (Vitest)
+        working-directory: extension
+        run: npm test
+
+  extension-mv3-smoke:
+    name: Packaged MV3 Extension Smoke Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: 'npm'
+          cache-dependency-path: extension/package-lock.json
+
+      - name: Install dependencies (clean install)
+        working-directory: extension
+        run: npm ci
+
+      - name: Install Playwright Chromium
+        working-directory: extension
+        run: npx playwright install --with-deps chromium
+
+      - name: Build production extension bundle
+        working-directory: extension
+        run: npm run build
+
+      - name: Run Playwright preview smoke tests
+        working-directory: extension
+        run: npm run test:smoke
+
+      - name: Load packaged extension in isolated Chromium
+        working-directory: extension
+        run: npx playwright test --config=playwright-extension.config.ts

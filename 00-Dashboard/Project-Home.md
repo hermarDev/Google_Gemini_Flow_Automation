@@ -2,12 +2,12 @@
 type: project-dashboard
 project: AI Media Automator
 created: 2026-10-19
-status: planning
+status: in-progress
 ---
 # AI Media Automator · Project Home
 
 > [!important] Current milestone
-> **Sprint 0: research and architecture.** All implementation sprints remain planned. Gemini Omni Flash 720p / 10s / 9:16 is the proposed default **if available**. Changes to pricing, capability, model identity or provider UI must be rechecked before implementation.
+> **Sprint 1: extension foundation and design system.** Sprint 0 research complete. Gemini Omni Flash 720p / 10s / 9:16 is the proposed default **if available**. Changes to pricing, capability, model identity or provider UI must be rechecked before implementation.
 
 ## Command center
 

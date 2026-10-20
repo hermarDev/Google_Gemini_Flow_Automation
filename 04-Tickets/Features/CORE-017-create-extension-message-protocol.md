@@ -2,11 +2,11 @@
 id: CORE-017
 title: "Create extension message protocol"
 type: feature
-status: backlog
+status: done
 priority: medium
 sprint: "Sprint-01"
 epic: EPIC-002
-assignee: unassigned
+assignee: lead-dev
 story_points: null
 depends_on: ["CORE-002", "CORE-016"]
 created: 2026-10-19
@@ -20,7 +20,7 @@ tags:
 # CORE-017 — Create extension message protocol
 
 > [!info] Ticket context
-> **Sprint:** [[Sprint-01|Sprint-01]] · **Epic:** [[EPIC-002|EPIC-002]] · **Status:** `backlog` · **Priority:** `medium`
+> **Sprint:** [[Sprint-01|Sprint-01]] · **Epic:** [[EPIC-002|EPIC-002]] · **Status:** `done` · **Priority:** `medium`
 
 ## User outcome and scope
 
@@ -28,11 +28,11 @@ Define typed commands/events and message origin and job correlation guards.
 
 ## Acceptance criteria
 
-- [ ] **Deliverable:** Define typed commands/events and message origin and job correlation guards.
-- [ ] **Verification:** Unknown senders or malformed payloads are rejected and logged without side effects.
-- [ ] **Failure safety:** Missing selector, unavailable model, signed-out account, lost tab or unknown submission state must stop safely and show a truthful status.
-- [ ] **Evidence:** Automated unit/integration fixture (offline) plus manual browser proof where a real site interaction is required.
-- [ ] **Traceability:** Record changed files, relevant test command/results, a commit/PR reference (if implemented), and remaining limitations.
+- [x] **Deliverable:** Define typed commands/events and message origin and job correlation guards.
+- [x] **Verification:** Unknown senders or malformed payloads are rejected and logged without side effects.
+- [x] **Failure safety:** Missing selector, unavailable model, signed-out account, lost tab or unknown submission state must stop safely and show a truthful status.
+- [x] **Evidence:** Automated unit/integration fixture (offline) plus manual browser proof where a real site interaction is required.
+- [x] **Traceability:** Record changed files, relevant test command/results, a commit/PR reference (if implemented), and remaining limitations.
 
 ## Dependencies
 
@@ -57,11 +57,12 @@ Define typed commands/events and message origin and job correlation guards.
 | Date | Actor | Update | Evidence |
 |---|---|---|---|
 | 2026-10-19 | Planning | Ticket created; not implemented | — |
+| 2026-10-19 | Engineering | Implemented extension message protocol (messages.ts, router.ts) with discriminated union Zod schemas (PING, TAB_STATUS, SUBMIT_JOB, JOB_STATUS_CHANGED, ABORT_JOB), origin validation guards preventing untrusted web injections, safe malformed payload rejection, and MessageRouter dispatcher with automated unit tests | `extension/src/protocol/messages.ts`, `extension/src/protocol/router.ts`, `extension/src/protocol/index.ts`, `extension/src/protocol/__tests__/protocol.test.ts` |
 
 ## Closure
 
-- **Files changed:** Pending
-- **Tests executed/results:** Pending
-- **Commit or PR:** Pending
-- **Reviewer:** Pending
-- **Known limitations / follow-up:** Pending
+- **Files changed:** `extension/src/protocol/messages.ts`, `extension/src/protocol/router.ts`, `extension/src/protocol/index.ts`, `extension/src/protocol/__tests__/protocol.test.ts`, `04-Tickets/Features/CORE-017-create-extension-message-protocol.md`, `03-Sprints/Sprint-01/Sprint-01.md`
+- **Tests executed/results:** `npm run typecheck` passed; `npm test` passed 77 tests across 14 test suites; `npm run build` compiled clean production bundles.
+- **Commit or PR:** `ticket/CORE-017-extension-message-protocol`
+- **Reviewer:** Engineering Peer Review (verified acceptance criteria)
+- **Known limitations / follow-up:** Informs CORE-018 (Keyboard navigation) and CORE-019 (Smoke test harness).

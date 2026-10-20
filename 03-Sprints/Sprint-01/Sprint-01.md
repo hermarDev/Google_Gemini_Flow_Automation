@@ -1,9 +1,9 @@
 ---
 type: sprint
 sprint: "Sprint-01"
-status: planned
+status: in-progress
 created: 2026-10-19
-planned_start: null
+planned_start: 2026-10-19
 planned_end: null
 capacity_points: null
 ---
@@ -15,26 +15,26 @@ capacity_points: null
 
 ## Scope (20 tickets)
 
-- [ ] [[CORE-001-initialize-isolated-source-repository|CORE-001]] — Initialize isolated source repository (`high`)
-- [ ] [[CORE-002-create-mv3-manifest-and-permission-baseline|CORE-002]] — Create MV3 manifest and permission baseline (`high`)
-- [ ] [[CORE-003-build-vite-multi-entry-extension-pipeline|CORE-003]] — Build Vite multi-entry extension pipeline (`high`)
-- [ ] [[CORE-004-configure-formatting-static-analysis-and-typescript-strict|CORE-004]] — Configure formatting, static analysis and TypeScript strictness (`high`)
-- [ ] [[CORE-005-implement-github-ci-quality-gates|CORE-005]] — Implement GitHub CI quality gates (`medium`)
-- [ ] [[CORE-006-create-obsidian-ticket-to-code-traceability-convention|CORE-006]] — Create Obsidian ticket-to-code traceability convention (`medium`)
-- [ ] [[CORE-007-implement-extension-side-panel-shell|CORE-007]] — Implement extension side panel shell (`medium`)
-- [ ] [[CORE-008-implement-full-page-workspace-shell|CORE-008]] — Implement full-page workspace shell (`medium`)
-- [ ] [[CORE-009-define-design-tokens-and-spacing-system|CORE-009]] — Define design tokens and spacing system (`medium`)
-- [ ] [[CORE-010-create-typography-and-icon-standards|CORE-010]] — Create typography and icon standards (`medium`)
-- [ ] [[CORE-011-implement-reusable-forms-and-input-controls|CORE-011]] — Implement reusable forms and input controls (`medium`)
-- [ ] [[CORE-012-implement-cards-tables-and-status-components|CORE-012]] — Implement cards, tables and status components (`medium`)
-- [ ] [[CORE-013-implement-light-dark-and-system-themes|CORE-013]] — Implement light, dark and system themes (`medium`)
-- [ ] [[CORE-014-implement-global-navigation-and-route-state|CORE-014]] — Implement global navigation and route state (`medium`)
-- [ ] [[CORE-015-implement-app-settings-persistence|CORE-015]] — Implement app settings persistence (`medium`)
-- [ ] [[CORE-016-create-adapter-interfaces-and-mock-transport|CORE-016]] — Create adapter interfaces and mock transport (`medium`)
-- [ ] [[CORE-017-create-extension-message-protocol|CORE-017]] — Create extension message protocol (`medium`)
-- [ ] [[CORE-018-add-keyboard-navigation-and-accessible-focus|CORE-018]] — Add keyboard navigation and accessible focus (`medium`)
-- [ ] [[CORE-019-establish-component-extension-and-smoke-test-harness|CORE-019]] — Establish component, extension and smoke test harness (`medium`)
-- [ ] [[CORE-020-deliver-sprint-1-vertical-slice|CORE-020]] — Deliver Sprint 1 vertical slice (`medium`)
+- [x] [[CORE-001-initialize-isolated-source-repository|CORE-001]] — Initialize isolated source repository (`high`)
+- [x] [[CORE-002-create-mv3-manifest-and-permission-baseline|CORE-002]] — Create MV3 manifest and permission baseline (`high`)
+- [x] [[CORE-003-build-vite-multi-entry-extension-pipeline|CORE-003]] — Build Vite multi-entry extension pipeline (`high`)
+- [x] [[CORE-004-configure-formatting-static-analysis-and-typescript-strict|CORE-004]] — Configure formatting, static analysis and TypeScript strictness (`high`)
+- [x] [[CORE-005-implement-github-ci-quality-gates|CORE-005]] — Implement GitHub CI quality gates (`medium`)
+- [x] [[CORE-006-create-obsidian-ticket-to-code-traceability-convention|CORE-006]] — Create Obsidian ticket-to-code traceability convention (`medium`)
+- [x] [[CORE-007-implement-extension-side-panel-shell|CORE-007]] — Implement extension side panel shell (`medium`)
+- [x] [[CORE-008-implement-full-page-workspace-shell|CORE-008]] — Implement full-page workspace shell (`medium`)
+- [x] [[CORE-009-define-design-tokens-and-spacing-system|CORE-009]] — Define design tokens and spacing system (`medium`)
+- [x] [[CORE-010-create-typography-and-icon-standards|CORE-010]] — Create typography and icon standards (`medium`)
+- [x] [[CORE-011-implement-reusable-forms-and-input-controls|CORE-011]] — Implement reusable forms and input controls (`medium`)
+- [x] [[CORE-012-implement-cards-tables-and-status-components|CORE-012]] — Implement cards, tables and status components (`medium`)
+- [x] [[CORE-013-implement-light-dark-and-system-themes|CORE-013]] — Implement light, dark and system themes (`medium`)
+- [x] [[CORE-014-implement-global-navigation-and-route-state|CORE-014]] — Implement global navigation and route state (`medium`)
+- [x] [[CORE-015-implement-app-settings-persistence|CORE-015]] — Implement app settings persistence (`medium`)
+- [x] [[CORE-016-create-adapter-interfaces-and-mock-transport|CORE-016]] — Create adapter interfaces and mock transport (`medium`)
+- [x] [[CORE-017-create-extension-message-protocol|CORE-017]] — Create extension message protocol (`medium`)
+- [x] [[CORE-018-add-keyboard-navigation-and-accessible-focus|CORE-018]] — Add keyboard navigation and accessible focus (`medium`)
+- [ ] [[CORE-019-establish-component-extension-and-smoke-test-harness|CORE-019]] — Establish component, extension and smoke test harness (`medium`) — PR #37 submitted and all CI checks passed; in review.
+- [ ] [[CORE-020-deliver-sprint-1-vertical-slice|CORE-020]] — Deliver Sprint 1 vertical slice (`medium`) — local review remediation implemented and verified; independent code review and GitHub integration pending.
 
 ## Execution policy
 
@@ -45,9 +45,9 @@ capacity_points: null
 
 ## Sprint review and retrospective
 
-- **Demo evidence:** Pending
-- **Completed / carried forward:** Pending
-- **Bugs and regressions:** Pending
-- **Security/licensing/budget notes:** Pending
-- **Retro: Keep / Improve / Try:** Pending
-- **Go / no-go and approver:** Pending
+- **Demo evidence:** Offline packaged MV3 extension smoke pass; no live Google generation or screenshot evidence.
+- **Completed / carried forward:** CORE-020 implementation and local review remediation validated; awaiting independent code review and GitHub integration before ticket closure.
+- **Bugs and regressions:** Cancellation after `submitting` now persists a terminal failure status and is covered by regression test; cross-context queue concurrency remains unproven.
+- **Security/licensing/budget notes:** Exact approved sender-host checks and sender extension-ID checks are tested; no Google credits used.
+- **Retro: Keep / Improve / Try:** Keep exact-host protocol guards; improve queue concurrency evidence across separate execution contexts.
+- **Go / no-go and approver:** No-go for sprint closure until external PR approval and integration; PRs #37/#38 remain author-owned and open.
