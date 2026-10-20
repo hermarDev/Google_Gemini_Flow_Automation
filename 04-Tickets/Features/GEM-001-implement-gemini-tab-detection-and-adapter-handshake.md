@@ -20,7 +20,7 @@ tags:
 # GEM-001 — Implement Gemini tab detection and adapter handshake
 
 > [!info] Ticket context
-> **Sprint:** [[Sprint-02|Sprint-02]] · **Epic:** [[EPIC-003|EPIC-003]] · **Status:** `backlog` · **Priority:** `high`
+> **Sprint:** [[Sprint-02|Sprint-02]] · **Epic:** [[EPIC-003|EPIC-003]] · **Status:** `review` · **Priority:** `high`
 
 ## User outcome and scope
 
