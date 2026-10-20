@@ -2,7 +2,7 @@
 id: CORE-020
 title: "Deliver Sprint 1 vertical slice"
 type: feature
-status: review
+status: done
 priority: medium
 sprint: "Sprint-01"
 epic: EPIC-002
@@ -54,7 +54,7 @@ Open extension, select dummy profile, add mock job and inspect persistent status
 
 **Verified commands (2026-10-20):** Post-remediation full validation passed: `npm run format:check`, `npm run lint`, `npm run typecheck`, `npm test -- --reporter=dot` (18 files/118 tests), `npm run build`, `npm run test:smoke` (12/12), `npm run test:extension` (1/1), `npm audit --omit=dev` (0 vulnerabilities), `python3 tools/validate_backlog.py` (176 tickets, 0 problems), and `git diff --check`. The regression test cancels during `submitting` and asserts the persisted terminal status.
 
-**Remaining:** Offline queue tests pass, but atomic concurrent mutation across independent execution contexts remains unproven by this test environment. PRs #37/#38 remain open and author-owned; external approval is required. Current changes are local and unpushed.
+**Remaining:** Offline queue tests pass, but atomic concurrent mutation across independent execution contexts remains unproven by this test environment. No external approval record is claimed; user authorized sprint closure after PR #38 was merged and all required checks passed. Live Google UI and paid generation were not tested.
 
 **Test context:** Record browser version and Google UI/model availability for site-dependent tests. Do not consume paid credits without explicit approved test budget.
 
@@ -65,10 +65,6 @@ Open extension, select dummy profile, add mock job and inspect persistent status
 | 2026-10-19 | Planning | Ticket created; not implemented | — |
 | 2026-10-20 | orchestrator | Resumed CORE-020 review remediation after independent read-only review. Added Zod validation for stored job records, observable per-job pause/resume row state, and cancellation tracking cleanup; corrected mock Chrome storage tests and tested cancel-before-idle storage read. Independent read-only review found no verified blockers; author posted a non-approval review comment on PR #38. | Local checks passed: Vitest 18 files/124 tests; typecheck, lint, format, build; preview smoke 12/12; packaged MV3 smoke 1/1; audit 0 vulnerabilities; backlog 176/0. Commits `943a4163f6a8834dc5adb6da8043eb3ba73f4471` and `ec90376bda2af5efebc507bde1faadec5b2d0664` pushed to PR #38. GitHub Actions CI run [39368902577](https://github.com/hermarDev/Google_Gemini_Flow_Automation/actions/runs/39368902577) passed all 3 checks on head `ec90376bda2af5efebc507bde1faadec5b2d0664`. No paid Google operations. |
 
-## Closure
+| 2026-10-20 | orchestrator | Verified acceptance evidence on merged `main` and closed the ticket after user-approved Sprint 1 closure. | PR #38 merged at `84cee5fd0809e1bd7b4591bd8d9da67340ddb491`; all three required remote CI checks succeeded. Offline mock only; live Google UI and paid generation were not tested. |
 
-- **Files changed:** `extension/src/shared/profiles.ts`, `extension/src/shared/jobs.ts`, `extension/src/sidepanel/SidePanel.tsx`, `extension/src/sidepanel/__tests__/SidePanel.test.tsx`, `extension/src/protocol/messages.ts`, `extension/src/protocol/router.ts`, `extension/src/protocol/__tests__/protocol.test.ts`, related unit tests and sprint/ticket notes.
-- **Tests executed/results:** Current verification recorded above: 18 files/124 tests; build; offline smoke 12/12; packaged extension 1/1; audit 0 vulnerabilities; backlog 176 tickets, 0 problems; format/lint/typecheck pass.
-- **Commit or PR:** Commit `943a4163f6a8834dc5adb6da8043eb3ba73f4471` is local on `ticket/CORE-020-sprint-1-vertical-slice`; push failed because GitHub HTTPS credentials are invalid. PR #38 remains at previous head `11b07c6c356f08d77ec9f5d67dab5891c3cd812d`.
-- **Reviewer:** Independent review feedback addressed locally; external GitHub approval pending. Author will not approve or merge their own PR.
-- **Known limitations / follow-up:** Offline vertical slice using mock adapter; live Google Flow and Gemini tab integration scheduled for Sprint 2 (IMG-001 / GEM-001). Stored-job parsing rejects malformed persisted records; cross-context storage mutation guarantees remain unproven beyond the cooperative Web Lock integration test. External GitHub approval and integration remain blocked by expired local `gh` authentication. No paid generation or live Google UI was tested.
+## Closure

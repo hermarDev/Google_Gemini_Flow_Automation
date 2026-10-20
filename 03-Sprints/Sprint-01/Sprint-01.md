@@ -1,7 +1,7 @@
 ---
 type: sprint
 sprint: "Sprint-01"
-status: in-progress
+status: done
 created: 2026-10-19
 planned_start: 2026-10-19
 planned_end: null
@@ -33,8 +33,8 @@ capacity_points: null
 - [x] [[CORE-016-create-adapter-interfaces-and-mock-transport|CORE-016]] — Create adapter interfaces and mock transport (`medium`)
 - [x] [[CORE-017-create-extension-message-protocol|CORE-017]] — Create extension message protocol (`medium`)
 - [x] [[CORE-018-add-keyboard-navigation-and-accessible-focus|CORE-018]] — Add keyboard navigation and accessible focus (`medium`)
-- [ ] [[CORE-019-establish-component-extension-and-smoke-test-harness|CORE-019]] — Establish component, extension and smoke test harness (`medium`) — PR #37 submitted and all CI checks passed; in review.
-- [ ] [[CORE-020-deliver-sprint-1-vertical-slice|CORE-020]] — Deliver Sprint 1 vertical slice (`medium`) — local review remediation implemented and verified; independent code review and GitHub integration pending.
+- [x] [[CORE-019-establish-component-extension-and-smoke-test-harness|CORE-019]] — Establish component, extension and smoke test harness (`medium`) — delivered in PR #37; PR #38 integration and all CI checks passed.
+- [x] [[CORE-020-deliver-sprint-1-vertical-slice|CORE-020]] — Deliver Sprint 1 vertical slice (`medium`) — PR #38 merged; required checks passed; user approved sprint closure.
 
 ## Execution policy
 
@@ -46,8 +46,16 @@ capacity_points: null
 ## Sprint review and retrospective
 
 - **Demo evidence:** Offline packaged MV3 extension smoke pass; no live Google generation or screenshot evidence.
-- **Completed / carried forward:** CORE-020 implementation and local review remediation validated; awaiting independent code review and GitHub integration before ticket closure.
+- **Completed / carried forward:** CORE-019 harness work and CORE-020 vertical slice are integrated; PR #38 merged with required CI checks green.
 - **Bugs and regressions:** Cancellation after `submitting` now persists a terminal failure status and is covered by regression test; cross-context queue concurrency remains unproven.
 - **Security/licensing/budget notes:** Exact approved sender-host checks and sender extension-ID checks are tested; no Google credits used.
 - **Retro: Keep / Improve / Try:** Keep exact-host protocol guards; improve queue concurrency evidence across separate execution contexts.
-- **Go / no-go and approver:** No-go for sprint closure until external PR approval and integration; PRs #37/#38 remain author-owned and open.
+- **Go / no-go and approver:** Go — user approved closure after verifying sprint exit criteria and Definition of Done evidence. No live Google generation was performed; it was not required for this offline mock sprint.
+
+## Closure evidence
+
+- **Integration:** PR #38 merged at `84cee5fd0809e1bd7b4591bd8d9da67340ddb491`.
+- **Remote required checks:** Backlog Integrity Check, Extension Lint/Typecheck/Test/Build (22.x), and Packaged MV3 Extension Smoke Test all succeeded on the merge commit.
+- **Backlog integrity:** `python3 tools/validate_backlog.py` reports 176 tickets, 0 problems.
+- **Verification limitations:** The sprint demonstrated an offline mock vertical slice only. Live Google UI/provider behavior, paid generation/download, and cross-context queue concurrency remain unverified and must be addressed by applicable future tickets.
+- **Approval:** User approved Sprint 1 closure on 2026-10-20.

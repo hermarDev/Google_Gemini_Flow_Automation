@@ -2,7 +2,7 @@
 id: CORE-019
 title: "Establish component, extension and smoke test harness"
 type: feature
-status: review
+status: done
 priority: medium
 sprint: "Sprint-01"
 epic: EPIC-002
@@ -28,11 +28,11 @@ Configure Vitest, DOM mocks, Playwright fixture extension loader, deterministic 
 
 ## Acceptance criteria
 
-- [ ] **Deliverable:** Configure Vitest, DOM mocks, Playwright fixture extension loader, deterministic site fakes.
-- [ ] **Verification:** Tests run offline for the shell without paid Google generations.
-- [ ] **Failure safety:** Missing selector, unavailable model, signed-out account, lost tab or unknown submission state must stop safely and show a truthful status.
-- [ ] **Evidence:** Automated unit/integration fixture (offline) plus manual browser proof where a real site interaction is required.
-- [ ] **Traceability:** Record changed files, relevant test command/results, a commit/PR reference (if implemented), and remaining limitations.
+- [x] **Deliverable:** Configure Vitest, DOM mocks, Playwright fixture extension loader, deterministic site fakes.
+- [x] **Verification:** Tests run offline for the shell without paid Google generations.
+- [x] **Failure safety:** Missing selector, unavailable model, signed-out account, lost tab or unknown submission state must stop safely and show a truthful status.
+- [x] **Evidence:** Automated unit/integration fixture (offline) plus manual browser proof where a real site interaction is required.
+- [x] **Traceability:** Record changed files, relevant test command/results, a commit/PR reference (if implemented), and remaining limitations.
 
 ## Dependencies
 
@@ -66,10 +66,11 @@ Configure Vitest, DOM mocks, Playwright fixture extension loader, deterministic 
 | 2026-10-20 | session-core-019 | Added repeatable packaged MV3 Playwright test and dedicated Node 22 CI job; test copies `dist` and uses a fresh temporary Chromium profile, blocks external requests and DNS, then checks the service worker and side-panel UI. | `npm run test:extension` (1/1) and `npm run test:smoke` (10/10) pass after build. `npm run format:check`, `npm run lint`, `npm run typecheck`, and backlog validation pass. CI job awaits a PR run; independent review pending. |
 | 2026-10-20 | orchestrator | Reviewed PR #37 finding and remediated SidePanel connection truthfulness: production now detects the active/last-focused tab, accepts only exact HTTPS Flow/Gemini hosts, and reacts to tab activation/update; default remains disconnected with Generate disabled. Replaced simulated render/completion UI with explicit mock simulation wording and removed fabricated progress/timing. | Unit tests cover disconnected default and mock simulation labels; awaiting rerun of full suite and packaged smoke before pushing. Production submission is still not implemented; this ticket is test-harness scope, so do not represent mock queueing as live generation. |
 
+
 ## Closure
 
-- **Files changed:** `.github/workflows/ci.yml`, `00-Dashboard/Project-Home.md`, `03-Sprints/Sprint-01/Sprint-01.md`, `04-Tickets/Features/CORE-019-establish-component-extension-and-smoke-test-harness.md`, `extension/.prettierignore`, `extension/README.md`, `extension/manifest.json`, `extension/package.json`, `extension/package-lock.json`, `extension/tsconfig.json`, `extension/vitest.config.ts`, `extension/playwright.config.ts`, `extension/playwright-extension.config.ts`, `extension/playwright/`, `extension/playwright-extension/`, `extension/src/adapters/`, `extension/src/content/`, `extension/src/protocol/router.ts`, `extension/src/components/ui/__tests__/focus.test.tsx`, `extension/src/workspace/__tests__/router.test.tsx`.
-- **Tests executed/results:** `npm run format:check` (pass), `npm run lint` (pass), `npm run typecheck` (pass), `npm test -- --reporter=dot` (87/87 pass), `npm run build` (pass), `npm run test:smoke` (11/11 pass), `npm run test:extension` (1/1 pass), `npm audit --omit=dev` (0 vulnerabilities), `git diff --check` (pass), `python3 tools/validate_backlog.py` (176 tickets, 0 problems).
-- **Commit or PR:** `ticket/CORE-019-offline-smoke-test-harness`, PR [#37](https://github.com/hermarDev/Google_Gemini_Flow_Automation/pull/37) (all CI checks passed).
-- **Reviewer:** Peer review pending on PR #37.
-- **Known limitations / follow-up:** Offline only; no live Google UI/account/provider generation verification. Remote CI quality gates confirmed green on PR #37.
+- **Files changed:** `.github/workflows/ci.yml`, `00-Dashboard/Project-Home.md`, `03-Sprints/Sprint-01/Sprint-01.md`, this ticket, extension tooling/config and offline tests/fixtures, adapters, and protocol/router tests.
+- **Tests executed/results:** `npm run format:check`, `npm run lint`, `npm run typecheck`, `npm test -- --reporter=dot` (87/87), `npm run build`, `npm run test:smoke` (11/11), `npm run test:extension` (1/1), `npm audit --omit=dev` (0 vulnerabilities), `git diff --check`, and `python3 tools/validate_backlog.py` (176 tickets, 0 problems) passed as recorded in the merged ticket history; required checks on merged PR #38 also passed.
+- **Commit or PR:** PR [#38](https://github.com/hermarDev/Google_Gemini_Flow_Automation/pull/38) merged at `84cee5fd0809e1bd7b4591bd8d9da67340ddb491`.
+- **Approval:** User approved Sprint 1 closure after integration and required checks passed; no external reviewer approval is claimed.
+- **Known limitations / follow-up:** Offline only; no live Google UI/account/provider generation. Cross-context queue concurrency remains unproven.
