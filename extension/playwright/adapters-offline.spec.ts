@@ -40,7 +40,7 @@ test('content script host guards reject unrelated and lookalike domains without 
   await page.goto('data:text/html,<title>Offline adapter fixture</title>');
   const results = {
     flow: isFlowCanvas('flow.google.com'),
-    gemini: isGeminiChat('gemini.google.com'),
+    gemini: isGeminiChat('gemini.google.com', '/app/conversation-123'),
     flowLookalike: isFlowCanvas('flow.google.com.attacker.invalid'),
     geminiLookalike: isGeminiChat('gemini.google.com.attacker.invalid'),
   };

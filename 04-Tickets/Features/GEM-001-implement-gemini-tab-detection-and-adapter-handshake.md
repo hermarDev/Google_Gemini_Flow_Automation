@@ -2,7 +2,7 @@
 id: GEM-001
 title: "Implement Gemini tab detection and adapter handshake"
 type: feature
-status: backlog
+status: review
 priority: high
 sprint: "Sprint-02"
 epic: EPIC-003
@@ -10,7 +10,7 @@ assignee: unassigned
 story_points: null
 depends_on: ["CORE-016", "CORE-017"]
 created: 2026-10-19
-updated: 2026-10-19
+updated: 2026-10-21
 tags:
   - ai-media-automator
   - agile-ticket
@@ -48,20 +48,23 @@ Detect supported Gemini origin, route, tab and readiness with human-readable con
 
 ## Verification notes
 
-**Specific verification:** Wrong page or unloaded Gemini shows actionable non-destructive prompt, not false ready.
+**Specific verification:** A supported Gemini conversation tab with a visible composer is reported ready only when there is no visible sign-in prompt. The extension SidePanel request is authenticated by the extension sender ID and an explicit numeric target tab ID; when Chrome supplies `sender.tab.id`, it must match the requested tab. The UI continues polling every two seconds and fails closed on missing/invalid replies, tab changes, runtime errors, or a composer/sign-in state change.
 
-**Test context:** Record browser version and Google UI/model availability for site-dependent tests. Do not consume paid credits without explicit approved test budget.
+**Test context:** Automated DOM/SidePanel tests and offline packaged-extension smoke only; browser version/site availability not recorded for live extension-to-Gemini interaction. Do not consume paid credits without explicit approved test budget.
 
 ## Work log
 
 | Date | Actor | Update | Evidence |
 |---|---|---|---|
 | 2026-10-19 | Planning | Ticket created; not implemented | — |
+| 2026-10-21 | telegram-10948-gem001-progress | Completed Gemini route/composer readiness and authenticated SidePanel handshake with fail-closed status, tab-race protection, ongoing polling, malformed-message rejection and regression coverage. | 159/159 unit tests; 12/12 offline smoke; packaged MV3 SidePanel→content-script fixture handshake passed and repeated 5/5; typecheck, lint, format, build, `git diff --check`, backlog validation (176 tickets, 0 problems) passed. Live Gemini not tested. |
+| 2026-10-21 | telegram-10948-gem001-review | Independent focused review passed after fixing malformed-message handling and strengthening packaged SidePanel handshake coverage; no findings. Verified missing/null rejection, 27 focused Gemini tests, packaged E2E + five repeats and `git diff --check`. | Offline fixture only; no live site/authentication/prompt. |
+| 2026-10-21 | telegram-10948-gem001-release-prep | Reconciled Sprint 1 integration: PR #38 was merged at `84cee5fd0809e1bd7b4591bd8d9da67340ddb491`; PR #37 had stale base and conflicts, so closed it as superseded by #38. Re-ran the focused GEM-001 tests and full local gates on the final changes. | 45 focused content/SidePanel tests; 159/159 full suite; typecheck, lint, format, build, offline smoke 12/12, packaged extension 1/1 and repeat 5/5, backlog 176/0, diff check all pass. GEM-001 local changes now ready for scoped PR; no live Gemini interaction. |
 
 ## Closure
 
-- **Files changed:** Pending
-- **Tests executed/results:** Pending
-- **Commit or PR:** Pending
-- **Reviewer:** Pending
-- **Known limitations / follow-up:** Pending
+- **Files changed:** `extension/src/content/gemini.ts`, `extension/src/content/__tests__/gemini.test.ts`, `extension/src/sidepanel/SidePanel.tsx`, `extension/src/sidepanel/__tests__/SidePanel.test.tsx`, `extension/playwright/adapters-offline.spec.ts`, `extension/playwright-extension/extension.smoke.spec.ts`.
+- **Tests executed/results:** `npm test -- --reporter=dot` (159/159 pass), `npm run typecheck` (pass), `npm run lint` (pass), `npm run format:check` (pass), `npm run build` (pass), `npm run test:smoke` (12/12 pass), `npm run test:extension` (1/1 pass; also repeated 5 times), `git diff --check` (pass), and `python3 tools/validate_backlog.py` (176 tickets, 0 problems).
+- **Commit or PR:** Local changes on `ticket/GEM-001-gemini-tab-readiness`; no GEM-001 commit or PR created.
+- **Reviewer:** Focused independent review passed after correcting malformed-message handling and packaged SidePanel handshake coverage. Review evidence is recorded above; Sprint 1 integration state was separately reconciled: PR #38 merged as `84cee5fd0809e1bd7b4591bd8d9da67340ddb491`, and redundant conflicting PR #37 was closed. The complete local diff is ready for a scoped GEM-001 PR; review is about the local changes, not a merged/released artifact.
+- **Known limitations / follow-up:** Authenticated live Gemini and live provider availability were not tested. Packaged Chromium exercises the real built SidePanel → content-script handshake against an intercepted fixture only. No sign-in or prompt submission occurred. Model availability and unknown-submission behavior remain unverified and out of GEM-001 scope. GEM-001 is in review, not done.

@@ -1,6 +1,7 @@
 import { describe, it, expect, afterEach, vi } from 'vitest';
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import { SidePanel } from '../SidePanel.tsx';
+import { createMessage, parseExtensionMessage } from '../../protocol/messages.ts';
 import {
   clearStoredJobs,
   getStoredJobs,
@@ -14,11 +15,14 @@ describe('SidePanel Shell Component', () => {
   let originalGet: typeof chrome.storage.local.get;
   let delayedGet: ReturnType<typeof vi.fn> | undefined;
   let finishRead: ((value: Record<string, unknown>) => void) | undefined;
+  let mockLastError: chrome.runtime.LastError | undefined;
 
   beforeEach(() => {
     chromeBeforeTest = globalThis.chrome;
     delayedGet = undefined;
     finishRead = undefined;
+    mockLastError = undefined;
+    vi.useRealTimers();
 
     if (!chromeBeforeTest) {
       const storage: Record<string, unknown> = {};
@@ -67,6 +71,64 @@ describe('SidePanel Shell Component', () => {
     }
     originalGet = globalThis.chrome.storage.local.get;
   });
+
+  const installActiveGeminiTab = (reply?: unknown, runtimeError?: string) => {
+    const baseChrome = globalThis.chrome;
+    const listeners = new Set<(tabId: number) => void>();
+    const runtime = { getURL: baseChrome.runtime.getURL };
+    Object.defineProperty(runtime, 'lastError', { get: () => mockLastError });
+    let queryTab = {
+      id: 7,
+      title: 'Gemini conversation',
+      url: 'https://gemini.google.com/app/conversation-123',
+    };
+    const query = vi.fn((_query: unknown, callback: (tabs: chrome.tabs.Tab[]) => void) =>
+      callback([queryTab as chrome.tabs.Tab])
+    );
+    const sendMessage = vi.fn(
+      (_tabId: number, _message: unknown, callback: (response?: unknown) => void) => {
+        queueMicrotask(() => {
+          mockLastError = runtimeError ? { message: runtimeError } : undefined;
+          callback(reply);
+          mockLastError = undefined;
+        });
+      }
+    );
+    const tabEvent = {
+      addListener: vi.fn((listener: (tabId: number) => void) => listeners.add(listener)),
+      removeListener: vi.fn((listener: (tabId: number) => void) => listeners.delete(listener)),
+    };
+    Object.defineProperty(globalThis, 'chrome', {
+      configurable: true,
+      value: {
+        ...baseChrome,
+        runtime,
+        tabs: {
+          ...baseChrome.tabs,
+          query,
+          sendMessage,
+          onActivated: tabEvent,
+          onUpdated: tabEvent,
+        },
+      },
+    });
+    return {
+      sendMessage,
+      activateTab: (tabId: number) => {
+        queryTab =
+          tabId === 8
+            ? { id: 8, title: 'Flow', url: 'https://flow.google.com/project/1' }
+            : {
+                id: 7,
+                title: 'Gemini conversation',
+                url: 'https://gemini.google.com/app/conversation-123',
+              };
+        listeners.forEach((listener) => listener(tabId));
+      },
+      query,
+      tabEvent,
+    };
+  };
 
   afterEach(() => {
     if (delayedGet && globalThis.chrome?.storage?.local) {
@@ -160,6 +222,213 @@ describe('SidePanel Shell Component', () => {
     } finally {
       // The suite-level cleanup restores the Chrome test double after each test.
     }
+  });
+
+  it('requires the Gemini content-script handshake before reporting a ready conversation', async () => {
+    const reply = createMessage('TAB_STATUS_RESULT', 'content', {
+      tabId: 7,
+      provider: 'gemini',
+      connected: true,
+    });
+    const { sendMessage } = installActiveGeminiTab(reply);
+
+    render(<SidePanel />);
+
+    await waitFor(() => expect(screen.getByText('Attached')).toBeDefined());
+    expect(sendMessage).toHaveBeenCalledTimes(1);
+    const [tabId, rawMessage] = sendMessage.mock.calls[0] ?? [];
+    expect(tabId).toBe(7);
+    const message = parseExtensionMessage(rawMessage);
+    expect(message.message).toMatchObject({
+      type: 'CHECK_TAB_STATUS',
+      payload: { tabId: 7 },
+    });
+  });
+
+  it('shows an actionable Gemini not-ready state and disables Generate when no composer is ready', async () => {
+    const { sendMessage } = installActiveGeminiTab(
+      createMessage('TAB_STATUS_RESULT', 'content', {
+        tabId: 7,
+        provider: 'gemini',
+        connected: false,
+      })
+    );
+
+    render(<SidePanel />);
+
+    expect(await screen.findByText('Gemini conversation not ready')).toBeDefined();
+    expect(
+      screen.getByText(
+        'Open a Gemini conversation, sign in if prompted, and wait for the prompt box to load. This readiness check does not submit a generation.'
+      )
+    ).toBeDefined();
+    expect(sendMessage).toHaveBeenCalledTimes(1);
+    expect((screen.getByRole('button', { name: /generate/i }) as HTMLButtonElement).disabled).toBe(
+      true
+    );
+  });
+
+  it.each([
+    ['a missing content script response', undefined, undefined],
+    ['a runtime messaging error', undefined, 'Could not establish connection'],
+    [
+      'a response for the wrong tab',
+      createMessage('TAB_STATUS_RESULT', 'content', {
+        tabId: 8,
+        provider: 'gemini',
+        connected: true,
+      }),
+      undefined,
+    ],
+  ])('fails closed on %s', async (_caseName, reply, runtimeError) => {
+    installActiveGeminiTab(reply, runtimeError);
+
+    render(<SidePanel />);
+
+    expect(await screen.findByText('Gemini conversation not ready')).toBeDefined();
+    expect((screen.getByRole('button', { name: /generate/i }) as HTMLButtonElement).disabled).toBe(
+      true
+    );
+  });
+
+  it('rechecks a loading Gemini tab until its composer becomes ready and continues monitoring', async () => {
+    vi.useFakeTimers();
+    const { sendMessage } = installActiveGeminiTab(
+      createMessage('TAB_STATUS_RESULT', 'content', {
+        tabId: 7,
+        provider: 'gemini',
+        connected: false,
+      })
+    );
+    sendMessage.mockImplementationOnce((_tabId, _message, callback) => {
+      queueMicrotask(() =>
+        callback(
+          createMessage('TAB_STATUS_RESULT', 'content', {
+            tabId: 7,
+            provider: 'gemini',
+            connected: false,
+          })
+        )
+      );
+    });
+    sendMessage.mockImplementationOnce((_tabId, _message, callback) => {
+      queueMicrotask(() =>
+        callback(
+          createMessage('TAB_STATUS_RESULT', 'content', {
+            tabId: 7,
+            provider: 'gemini',
+            connected: true,
+          })
+        )
+      );
+    });
+
+    render(<SidePanel />);
+    await act(async () => {
+      await Promise.resolve();
+    });
+    expect(screen.getByText('Gemini conversation not ready')).toBeDefined();
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(2000);
+    });
+    expect(screen.getByText('Attached')).toBeDefined();
+    const callsAfterReady = sendMessage.mock.calls.length;
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(4000);
+    });
+    expect(sendMessage.mock.calls.length).toBeGreaterThan(callsAfterReady);
+    vi.useRealTimers();
+  });
+
+  it('rechecks readiness so a composer that disappears disables generation again', async () => {
+    vi.useFakeTimers();
+    const { sendMessage } = installActiveGeminiTab(
+      createMessage('TAB_STATUS_RESULT', 'content', {
+        tabId: 7,
+        provider: 'gemini',
+        connected: true,
+      })
+    );
+    sendMessage.mockImplementationOnce((_tabId, _message, callback) => {
+      queueMicrotask(() =>
+        callback(
+          createMessage('TAB_STATUS_RESULT', 'content', {
+            tabId: 7,
+            provider: 'gemini',
+            connected: true,
+          })
+        )
+      );
+    });
+    sendMessage.mockImplementationOnce((_tabId, _message, callback) => {
+      queueMicrotask(() =>
+        callback(
+          createMessage('TAB_STATUS_RESULT', 'content', {
+            tabId: 7,
+            provider: 'gemini',
+            connected: false,
+          })
+        )
+      );
+    });
+
+    render(<SidePanel />);
+    await act(async () => {
+      await Promise.resolve();
+    });
+    expect(screen.getByText('Attached')).toBeDefined();
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(2000);
+    });
+    expect(screen.getByText('Gemini conversation not ready')).toBeDefined();
+    expect((screen.getByRole('button', { name: /generate/i }) as HTMLButtonElement).disabled).toBe(
+      true
+    );
+    vi.useRealTimers();
+  });
+
+  it('ignores a Gemini readiness reply after another tab becomes active', async () => {
+    let replyReady: ((response?: unknown) => void) | undefined;
+    const { sendMessage, activateTab, query } = installActiveGeminiTab(undefined);
+    let finishInitialQuery: ((tabs: chrome.tabs.Tab[]) => void) | undefined;
+    query.mockImplementationOnce((_query, callback) => {
+      finishInitialQuery = callback;
+    });
+    sendMessage.mockImplementation((_tabId, _message, callback) => {
+      replyReady = callback as (response?: unknown) => void;
+    });
+
+    render(<SidePanel />);
+    await waitFor(() => expect(query).toHaveBeenCalledTimes(1));
+    act(() =>
+      finishInitialQuery?.([
+        {
+          id: 7,
+          title: 'Gemini conversation',
+          url: 'https://gemini.google.com/app/conversation-123',
+        } as chrome.tabs.Tab,
+      ])
+    );
+    await waitFor(() => expect(sendMessage).toHaveBeenCalledTimes(1));
+
+    act(() => activateTab(8));
+    await waitFor(() => expect(screen.getByText('Flow')).toBeDefined());
+
+    act(() =>
+      replyReady?.(
+        createMessage('TAB_STATUS_RESULT', 'content', {
+          tabId: 7,
+          provider: 'gemini',
+          connected: true,
+        })
+      )
+    );
+
+    expect(screen.getByText('Flow')).toBeDefined();
+    expect(screen.getByText('Attached')).toBeDefined();
   });
 
   it('queues a mock job with valid prompt without claiming live rendering', async () => {
